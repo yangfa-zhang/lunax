@@ -1,3 +1,8 @@
+from abc import abstractmethod
+import pandas as pd
+import numpy as np
+from typing import Tuple, Dict, Literal, Optional
+
 class BaseModel():
     """
     所有模型的基础接口，定义 fit/predict/evaluate 方法。

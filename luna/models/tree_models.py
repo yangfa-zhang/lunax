@@ -1,7 +1,10 @@
-from base_model import BaseModel
+from .base_model import BaseModel
 from xgboost import XGBRegressor
+from typing import Union, Optional, List, Dict
+import pandas as pd
+import numpy as np
 
-class XGBoostRegressor(BaseModel):
+class xgb_reg(BaseModel):
     def __init__(self, params: Optional[Dict] = None):
         """
         初始化XGBoost回归模型。
