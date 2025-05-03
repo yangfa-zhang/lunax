@@ -1,5 +1,7 @@
 # luna: 表格数据机器学习库
+
 ## 代码结构
+
 ```
 luna/
 ├── data_processing/
@@ -67,26 +69,35 @@ luna/
 ├── requirements.txt    # 依赖包列表
 └── README.md          # 项目说明文档
 ```
+
 ## 开发流程
+
 ### 阶段一
+
 #### 环境配置
+
 requirements.txt
+
 #### 数据模块
+
 - 数据加载
+
 ```
 def load_data(file_path: str) -> pd.DataFrame:
     """
     从CSV文件中加载数据为 DataFrame。
-    
+  
     参数：
         file_path: str - 数据文件路径
-        
+      
     返回：
         pd.DataFrame - 加载后的数据
     """
 
 ```
+
 - 数据集分割
+
 ```
 def split_data(
     df: pd.DataFrame, 
@@ -97,20 +108,22 @@ def split_data(
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     将数据集按照给定比例划分为 train/val/test。
-    
+  
     参数：
         df: 数据集
         target: 目标列名
         test_size: 测试集比例
         val_size: 验证集比例（从 train 中再切）
         random_state: 随机种子
-    
+  
     返回：
         train_df, val_df, test_df
     """
 
 ```
+
 - 数据预处理
+
 ```
 def preprocess_data(
     df: pd.DataFrame,
@@ -122,7 +135,7 @@ def preprocess_data(
 ) -> Tuple[pd.DataFrame, pd.Series, Dict]:
     """
     对数据进行缺失值处理、编码、标准化等预处理操作。
-    
+  
     参数：
         df: 原始数据
         target: 目标列
@@ -130,15 +143,18 @@ def preprocess_data(
         category_strategy: 类别缺失填充方法 ['most_frequent']
         scale_numeric: 是否标准化数值特征
         encode_categorical: 是否对类别特征做编码
-    
+  
     返回：
         X: 特征矩阵
         y: 标签向量
         preprocess_info: 字典，包含编码器/缩放器等信息
     """
 ```
-#### 模型
+
+#### 模型模块
+
 - base模型
+
 ```
 class BaseModel(ABC):
     """
@@ -158,7 +174,9 @@ class BaseModel(ABC):
         pass
 
 ```
+
 - xgboost做回归任务
+
 ```
 from xgboost import XGBRegressor
 
@@ -166,7 +184,7 @@ class XGBoostRegressor(BaseModel):
     def __init__(self, params: Optional[Dict] = None):
         """
         初始化XGBoost回归模型。
-        
+      
         参数：
             params: 可选，传入XGBoost模型的超参数字典
         """
@@ -187,3 +205,76 @@ class XGBoostRegressor(BaseModel):
         }
 
 ```
+### 阶段二
+#### 超参数搜索模块
+- BaseTuner
+```
+class BaseTuner(ABC):
+    """
+    所有调参器的基础接口，定义搜索方法。
+    """
+
+    @abstractmethod
+    def optimize(self, 
+                 model_class: Type[BaseModel], 
+                 X_train: pd.DataFrame, 
+                 y_train: pd.Series,
+                 X_val: pd.DataFrame, 
+                 y_val: pd.Series) -> Dict:
+        """
+        执行超参数搜索。
+
+        参数：
+            model_class: 需要调参的模型类，应继承自 BaseModel。
+            X_train: 训练特征。
+            y_train: 训练标签。
+            X_val: 验证特征。
+            y_val: 验证标签。
+
+        返回：
+            最优超参数字典。
+        """
+        pass
+
+```
+- OptunaTuner
+```
+class OptunaTuner(BaseTuner):
+    def __init__(self, 
+                 n_trials: int = 50, 
+                 direction: str = "minimize", 
+                 metric_name: str = "rmse", 
+                 timeout: Optional[int] = None):
+        """
+        初始化 Optuna 调参器。
+
+        参数：
+            n_trials: 试验次数。
+            direction: 优化方向（"minimize" 或 "maximize"）。
+            metric_name: 评估指标名称。
+            timeout: 可选，超时时间（秒）。
+        """
+        pass
+
+    def optimize(self, 
+                 model_class: Type[BaseModel], 
+                 X_train: pd.DataFrame, 
+                 y_train: pd.Series,
+                 X_val: pd.DataFrame, 
+                 y_val: pd.Series) -> Dict:
+        """
+        实现 Optuna 的超参数搜索逻辑。
+
+        参考 BaseTuner 接口。
+        """
+        pass
+
+```
+
+### 阶段三
+#### 训练逻辑封装
+添加可视化内容 （学习曲线、解释性分析）
+### 阶段四
+#### 增加其他模型
+### 阶段五
+#### 增加其他调参方式
