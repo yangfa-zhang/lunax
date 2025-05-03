@@ -1,9 +1,11 @@
 from abc import abstractmethod
 import pandas as pd
 import numpy as np
-from typing import Tuple, Dict, Literal, Optional
+from typing import Tuple, Dict, Literal, Optional, Type
 
-class BaseTuner(ABC):
+from ..models.base_model import BaseModel
+
+class BaseTuner():
     """
     所有调参器的基础接口，定义搜索方法。
     """
