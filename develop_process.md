@@ -89,7 +89,7 @@ def load_data(file_path: str) -> pd.DataFrame:
   
     参数：
         file_path: str - 数据文件路径
-      
+    
     返回：
         pd.DataFrame - 加载后的数据
     """
@@ -184,7 +184,7 @@ class XGBoostRegressor(BaseModel):
     def __init__(self, params: Optional[Dict] = None):
         """
         初始化XGBoost回归模型。
-      
+    
         参数：
             params: 可选，传入XGBoost模型的超参数字典
         """
@@ -205,9 +205,13 @@ class XGBoostRegressor(BaseModel):
         }
 
 ```
+
 ### 阶段二
+
 #### 超参数搜索模块
+
 - BaseTuner
+
 ```
 class BaseTuner(ABC):
     """
@@ -237,7 +241,9 @@ class BaseTuner(ABC):
         pass
 
 ```
+
 - OptunaTuner
+
 ```
 class OptunaTuner(BaseTuner):
     def __init__(self, 
@@ -272,9 +278,15 @@ class OptunaTuner(BaseTuner):
 ```
 
 ### 阶段三
+
 #### 训练逻辑封装
+
 添加可视化内容 （学习曲线、解释性分析）
+
 ### 阶段四
+
 #### 增加其他模型
+
 ### 阶段五
+
 #### 增加其他调参方式

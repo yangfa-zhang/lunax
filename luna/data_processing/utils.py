@@ -69,9 +69,10 @@ def preprocess_data(
     # 复制数据，避免修改原始数据
     df = df.copy()
     
-    # 分离特征类型
-    numeric_features = df.select_dtypes(include=['int64', 'float64']).columns
-    categorical_features = df.select_dtypes(include=['object', 'category']).columns
+    # 分离特征类型（排除目标列）
+    feature_cols = df.columns.drop(target)
+    numeric_features = df[feature_cols].select_dtypes(include=['int64', 'float64']).columns
+    categorical_features = df[feature_cols].select_dtypes(include=['object', 'category']).columns
     
     # 处理数值特征
     if len(numeric_features) > 0:
@@ -93,8 +94,7 @@ def preprocess_data(
         # 类别特征编码
         if encode_categorical:
             for col in categorical_features:
-                if col != target:  # 不对目标列进行编码
-                    le = LabelEncoder()
-                    df[col] = le.fit_transform(df[col])
+                le = LabelEncoder()
+                df[col] = le.fit_transform(df[col])
     
     return df
