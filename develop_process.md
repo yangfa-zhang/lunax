@@ -279,10 +279,46 @@ class OptunaTuner(BaseTuner):
 
 ### 阶段三
 
-#### 训练逻辑封装
-
+#### 可视化
 添加可视化内容 （学习曲线、解释性分析）
+```
+viz/
+├── __init__.py
+├── eda.py              # 数据探索功能
+├── feature_analysis.py # 特征重要性、分布等
+├── model_eval.py       # 训练结果评估相关
+├── target_analysis.py  # 目标变量分析
+├── utils.py            # 公共可视化工具（如颜色设置、主题）
+```
+eda.py
+- plot_missing_values(df)
+- plot_numeric_distributions(df)
+- plot_categorical_counts(df)
+- correlation_matrix(df)
+- pairplot(df, target=None) 
 
+feature_analysis.py
+- plot_feature_importance(importances, feature_names)
+
+- plot_feature_distribution(df, feature, target)
+
+- plot_feature_vs_target(df, feature, target)
+
+model_eval.py
+- plot_learning_curve(train_scores, val_scores)
+
+- plot_confusion_matrix(y_true, y_pred)
+
+- plot_roc_curve(y_true, y_proba)
+
+- plot_precision_recall_curve(y_true, y_proba)
+
+- plot_residuals(y_true, y_pred)
+
+target_analysis.py
+- plot_target_distribution(y)
+
+- plot_target_vs_feature(df, target, feature)
 ### 阶段四
 
 #### 增加其他模型
