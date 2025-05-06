@@ -1,1 +1,1 @@
-from .eda import numeric_eda
+from .eda import numeric_eda,categoric_eda
