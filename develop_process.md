@@ -89,7 +89,7 @@ def load_data(file_path: str) -> pd.DataFrame:
   
     参数：
         file_path: str - 数据文件路径
-    
+  
     返回：
         pd.DataFrame - 加载后的数据
     """
@@ -184,7 +184,7 @@ class XGBoostRegressor(BaseModel):
     def __init__(self, params: Optional[Dict] = None):
         """
         初始化XGBoost回归模型。
-    
+  
         参数：
             params: 可选，传入XGBoost模型的超参数字典
         """
@@ -280,7 +280,9 @@ class OptunaTuner(BaseTuner):
 ### 阶段三
 
 #### 可视化
+
 添加可视化内容 （学习曲线、解释性分析）
+
 ```
 viz/
 ├── __init__.py
@@ -290,35 +292,38 @@ viz/
 ├── target_analysis.py  # 目标变量分析
 ├── utils.py            # 公共可视化工具（如颜色设置、主题）
 ```
+
 eda.py
+
+https://www.kaggle.com/code/tarundirector/rev-rain-pred-eda-time-series-ai-news#%5B3%5D-%F0%9F%92%A1-Exploratory-Data-Analysis-(EDA)
+
+配色方案： https://zhuanlan.zhihu.com/p/183710989
+
 - plot_missing_values(df)
 - plot_numeric_distributions(df)
 - plot_categorical_counts(df)
 - correlation_matrix(df)
-- pairplot(df, target=None) 
+- pairplot(df, target=None)
 
 feature_analysis.py
+
 - plot_feature_importance(importances, feature_names)
-
 - plot_feature_distribution(df, feature, target)
-
 - plot_feature_vs_target(df, feature, target)
 
 model_eval.py
+
 - plot_learning_curve(train_scores, val_scores)
-
 - plot_confusion_matrix(y_true, y_pred)
-
 - plot_roc_curve(y_true, y_proba)
-
 - plot_precision_recall_curve(y_true, y_proba)
-
 - plot_residuals(y_true, y_pred)
 
 target_analysis.py
-- plot_target_distribution(y)
 
+- plot_target_distribution(y)
 - plot_target_vs_feature(df, target, feature)
+
 ### 阶段四
 
 #### 增加其他模型
