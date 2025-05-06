@@ -21,7 +21,7 @@ class xgb_reg(BaseModel):
         return self.model.predict(X)
 
     def evaluate(self, X: pd.DataFrame, y: pd.Series) -> Dict[str, float]:
-        from sklearn.metrics import mean_squared_error, r2_score
+        from sklearn.metrics import root_mean_squared_error, r2_score
         
         # 打印目标值的范围信息
         print(f"目标值范围: [{y.min():.3f}, {y.max():.3f}]")
@@ -29,7 +29,7 @@ class xgb_reg(BaseModel):
         
         preds = self.predict(X)
         return {
-            "rmse": mean_squared_error(y, preds, squared=False),
+            "rmse": root_mean_squared_error(y, preds),
             "r2": r2_score(y, preds)
         }
 

@@ -297,6 +297,8 @@ eda.py
 
 https://www.kaggle.com/code/tarundirector/rev-rain-pred-eda-time-series-ai-news#%5B3%5D-%F0%9F%92%A1-Exploratory-Data-Analysis-(EDA)
 
+https://www.kaggle.com/code/tarundirector/backpack-pred-baseline-ensemble-eda#%5B3%5D-%F0%9F%92%A1-Exploratory-Data-Analysis-(EDA)
+
 配色方案： https://zhuanlan.zhihu.com/p/183710989
 
 - plot_missing_values(df)
