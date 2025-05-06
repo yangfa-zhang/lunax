@@ -1,6 +1,6 @@
 luna是一个专门用于表格类型数据的机器学习框架
 
-<img src="luna.jpg" width="200" height="150" alt="luna">
+<img src="./imgs/luna.jpg" width="200" height="150" alt="luna">
 
 **luna是这只小猫的名字，来自华南理工大学大学城校区生活区羽毛球场**
 

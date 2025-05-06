@@ -22,6 +22,11 @@ class xgb_reg(BaseModel):
 
     def evaluate(self, X: pd.DataFrame, y: pd.Series) -> Dict[str, float]:
         from sklearn.metrics import mean_squared_error, r2_score
+        
+        # 打印目标值的范围信息
+        print(f"目标值范围: [{y.min():.3f}, {y.max():.3f}]")
+        print(f"目标值统计:\n均值: {y.mean():.3f}\n标准差: {y.std():.3f}\n中位数: {y.median():.3f}\n")
+        
         preds = self.predict(X)
         return {
             "rmse": mean_squared_error(y, preds, squared=False),
@@ -52,6 +57,11 @@ class xgb_clf(BaseModel):
     def evaluate(self, X: pd.DataFrame, y: pd.Series) -> Dict[str, float]:
         """评估模型性能"""
         from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+        
+        # 直接打印标签信息
+        unique_labels = np.unique(y)
+        print(f"标签取值范围: {unique_labels}, 标签数量: {len(unique_labels)}")
+        print(f"各类别样本数量:\n{y.value_counts()}\n")
         
         preds = self.predict(X)
         return {
