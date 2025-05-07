@@ -7,7 +7,7 @@ import optuna
 
 class OptunaTuner(BaseTuner):
     def __init__(self, 
-                 param_space: Dict[str, Tuple],
+                 param_space: Dict[str, Tuple]=None,
                  n_trials: int = 50, 
                  direction: str = "minimize", 
                  metric_name: str = "rmse", 
@@ -41,15 +41,53 @@ class OptunaTuner(BaseTuner):
         """优化目标函数"""
         # 根据参数空间定义生成试验参数
         params = {}
-        for param_name, (param_type, *args) in self.param_space.items():
-            if param_type == 'int':
-                params[param_name] = trial.suggest_int(param_name, args[0], args[1])
-            elif param_type == 'float':
-                params[param_name] = trial.suggest_float(param_name, args[0], args[1])
-            elif param_type == 'categorical':
-                params[param_name] = trial.suggest_categorical(param_name, args[0])
-        
-        # 修改这里：使用 **params 解包参数字典
+        if self.param_space is None:
+            # 根据模型类名定义参数搜索空间
+            if model_class.__name__ in ['XGBRegressor', 'XGBClassifier']:
+                # 首先选择booster类型
+                booster = trial.suggest_categorical('booster', ['gbtree', 'gblinear'])
+                
+                # 基础参数
+                params = {
+                    'booster': booster,
+                    'seed': trial.suggest_int('seed', 0, 0),
+                    'eta': trial.suggest_float('eta', 0.01, 0.1),
+                    'lambda': trial.suggest_float('lambda', 0.0, 100),
+                    'reg_lambda': trial.suggest_float('reg_lambda', 0, 1),
+                    'reg_alpha': trial.suggest_int('reg_alpha', 40, 180),
+                }
+                
+                # 如果是gbtree，添加树相关的参数
+                if booster == 'gbtree':
+                    params.update({
+                        'gamma': trial.suggest_float('gamma', 1, 9),
+                        'subsample': trial.suggest_float('subsample', 0.6, 1),
+                        'max_depth': trial.suggest_int('max_depth', 3, 18),
+                        'colsample_bytree': trial.suggest_float('colsample_bytree', 0.5, 1),
+                        'min_child_weight': trial.suggest_int('min_child_weight', 0, 10),
+                        'grow_policy': trial.suggest_categorical('grow_policy', ['depthwise', 'lossguide']),
+                    })
+            elif model_class.__name__ in []:
+                params = {
+                    'max_depth': trial.suggest_int('max_depth', 3, 10),
+                    'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3),
+                    'n_estimators': trial.suggest_int('n_estimators', 50, 1000),
+                    'num_leaves': trial.suggest_int('num_leaves', 31, 127),
+                    'subsample': trial.suggest_float('subsample', 0.5, 1),
+                    'colsample_bytree': trial.suggest_float('colsample_bytree', 0.5, 1),
+                    'reg_alpha': trial.suggest_float('reg_alpha', 0, 1),
+                    'reg_lambda': trial.suggest_float('reg_lambda', 0, 1),
+                    'objective': trial.suggest_categorical('objective', ['regression', 'binary', 'multiclass'])
+                }
+        else:
+            # 如果提供了自定义参数空间
+            for param_name, (param_type, *args) in self.param_space.items():
+                if param_type == 'int':
+                    params[param_name] = trial.suggest_int(param_name, args[0], args[1])
+                elif param_type == 'float':
+                    params[param_name] = trial.suggest_float(param_name, args[0], args[1])
+                elif param_type == 'categorical':
+                    params[param_name] = trial.suggest_categorical(param_name, args[0])
         
         # 训练模型
         model = model_class(**params)
