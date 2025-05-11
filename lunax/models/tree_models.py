@@ -17,7 +17,7 @@ class xgb_reg(BaseModel):
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> None:
         self.model.fit(X, y)
-        print("[luna]> model training finished.")
+        print("[lunax]> model training finished.")
 
     def predict(self, X: pd.DataFrame) -> np.ndarray:
         return self.model.predict(X)
@@ -26,7 +26,7 @@ class xgb_reg(BaseModel):
         from sklearn.metrics import root_mean_squared_error, r2_score, mean_squared_error, mean_absolute_error
         
         # 打印目标值的范围信息
-        print("[luna]> target value description:")
+        print("[lunax]> target value description:")
         stats_table = [["min", "max", "mean", "std", "median"],
                       [f"{y.min():.2f}", f"{y.max():.2f}", f"{y.mean():.2f}", 
                        f"{y.std():.2f}", f"{y.median():.2f}"]]
@@ -39,7 +39,7 @@ class xgb_reg(BaseModel):
         r2 = r2_score(y, preds)
         
         # 打印评估结果
-        print("[luna]> model evaluation results:")
+        print("[lunax]> model evaluation results:")
         metrics_table = [["metrics", "rmse", "mse", "mae", "r2"],
                         ["values", f"{rmse:.2f}", f"{mse:.2f}", f"{mae:.2f}", f"{r2:.2f}"]]
         print(tabulate(metrics_table, headers="firstrow", tablefmt="grid"))
@@ -77,7 +77,7 @@ class xgb_clf(BaseModel):
         from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
         
         # 打印标签信息
-        print("[luna]> label information:")
+        print("[lunax]> label information:")
         class_dist_table = [["label", "count"]]
         for label, count in y.value_counts().items():
             class_dist_table.append([label, count])
@@ -91,7 +91,7 @@ class xgb_clf(BaseModel):
         f1 = f1_score(y, preds, average='weighted')
         
         # 打印评估结果
-        print("[luna]> model evaluation results:")
+        print("[lunax]> model evaluation results:")
         metrics_table = [["metrics", "accuracy", "precision", "recall", "f1"],
                         ["values", f"{accuracy:.2f}", f"{precision:.2f}", 
                          f"{recall:.2f}", f"{f1:.2f}"]]

@@ -1,11 +1,11 @@
 """
-测试luna中的models模块
+测试lunax中的models模块
 python -m pytest tests/test_model.py -v
 """
 import pytest
 import pandas as pd
 import numpy as np
-from luna.models import xgb_reg, xgb_clf
+from lunax.models import xgb_reg, xgb_clf
 
 @pytest.fixture
 def sample_regression_data():

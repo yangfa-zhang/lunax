@@ -1,11 +1,11 @@
 """
-测试luna的hyper_opt模块
+测试lunax的hyper_opt模块
 python -m pytest tests/test_opt.py -v
 """
 import pytest
 import pandas as pd
 import numpy as np
-from luna.hyper_opt import OptunaTuner
+from lunax.hyper_opt import OptunaTuner
 from xgboost import XGBRegressor, XGBClassifier
 
 @pytest.fixture

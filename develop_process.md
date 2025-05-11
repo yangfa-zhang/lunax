@@ -1,9 +1,9 @@
-# luna: 表格数据机器学习库
+# lunax: 表格数据机器学习库
 
 ## 代码结构
 
 ```
-luna/
+lunax/
 ├── data_processing/
 │   ├── __init__.py
 │   ├── loader.py          # 数据加载
@@ -341,9 +341,10 @@ target_analysis.py
 https://www.kaggle.com/code/thedevastator/the-fine-art-of-hyperparameter-tuning
 
 发布：
+
 ```
 python setup.py sdist
-twine upload dist\lunax-0.0.3.tar.gz
+twine upload dist\lunaxx-0.0.4.tar.gz
 ```
 
 ### 阶段六：数据处理增强
@@ -427,7 +428,7 @@ class StackingEnsemble(BaseModel):
     ):
         """
         初始化Stacking集成模型。
-    
+  
         参数：
             base_models: 基础模型列表
             meta_model: 元模型
@@ -447,7 +448,7 @@ class AutoML:
     ):
         """
         初始化AutoML系统。
-    
+  
         参数：
             task_type: 任务类型 ["classification", "regression"]
             time_limit: 时间限制（秒）
@@ -462,7 +463,7 @@ class ModelExplainer:
     def __init__(self, model: BaseModel):
         """
         初始化模型解释器。
-    
+  
         参数：
             model: 需要解释的模型
         """
@@ -470,10 +471,10 @@ class ModelExplainer:
     def explain_prediction(self, X: pd.DataFrame) -> Dict:
         """
         解释模型预测。
-    
+  
         参数：
             X: 特征矩阵
-    
+  
         返回：
             预测解释结果
         """
@@ -488,7 +489,7 @@ class ExperimentTracker:
     def __init__(self, experiment_name: str):
         """
         初始化实验追踪器。
-    
+  
         参数：
             experiment_name: 实验名称
         """
@@ -510,7 +511,7 @@ class ModelVersionControl:
     def __init__(self, model_dir: str):
         """
         初始化模型版本控制系统。
-    
+  
         参数：
             model_dir: 模型存储目录
         """
@@ -534,7 +535,7 @@ class BatchProcessor:
     ):
         """
         初始化批处理器。
-    
+  
         参数：
             model: 预测模型
             batch_size: 批处理大小
@@ -554,7 +555,7 @@ class ParallelProcessor:
     def __init__(self, n_jobs: int = -1):
         """
         初始化并行处理器。
-    
+  
         参数：
             n_jobs: 并行任务数，-1表示使用所有CPU
         """
@@ -570,7 +571,7 @@ class TrainingMonitor:
     def __init__(self, update_interval: int = 1):
         """
         初始化训练监控器。
-    
+  
         参数：
             update_interval: 更新间隔（秒）
         """

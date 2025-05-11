@@ -1,39 +1,17 @@
-luna是一个专门用于表格类型数据的机器学习框架
+lunax是一个专门用于表格类型数据的机器学习框架
 
 <img src="./imgs/luna.jpg" width="200" height="150" alt="luna">
 
 **luna是这只小猫的名字，来自华南理工大学大学城校区生活区羽毛球场**
-## installation
+## 如何下载
 ```
 conda create -n test_luna python=3.11
 pip install lunax
 ```
-```
-luna/
-│
-├── data/
-│   ├── loader.py            # 读取数据
-│   ├── preprocessing.py     # 缺失值处理、类别编码等
-│
-├── models/
-│   ├── base.py              # BaseModel定义
-│   ├── tree.py              # LightGBM/XGBoost/CatBoost
-│   ├── nn.py                # MLP, TabNet, TabFPN等
-│
-├── tuner/
-│   └── optuna_tuner.py      # Optuna的统一接口封装
-│
-├── trainer/
-│   └── trainer.py           # 模型训练、交叉验证
-│
-├── visualize/
-│   ├── training_plot.py     # loss/metric可视化
-│   └── interpret.py         # 特征重要性、SHAP等
-│
-├── utils/
-│   ├── metrics.py           # 评估指标
-│   └── logger.py            # 日志封装
-│
-└── main.py                  # 运行主入口（或命令行接口）
 
-```
+## 已有功能
+- 数据加载和处理
+- EDA分析
+- 自动化机器学习建模
+- 模型评估和解释
+- 数据可视化
