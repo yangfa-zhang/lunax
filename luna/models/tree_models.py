@@ -3,6 +3,7 @@ from xgboost import XGBRegressor, XGBClassifier
 from typing import Union, Optional, List, Dict
 import pandas as pd
 import numpy as np
+from tabulate import tabulate
 
 class xgb_reg(BaseModel):
     def __init__(self, params: Optional[Dict] = None):
@@ -16,21 +17,38 @@ class xgb_reg(BaseModel):
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> None:
         self.model.fit(X, y)
+        print("[luna]> 模型训练完成")
 
     def predict(self, X: pd.DataFrame) -> np.ndarray:
         return self.model.predict(X)
 
     def evaluate(self, X: pd.DataFrame, y: pd.Series) -> Dict[str, float]:
-        from sklearn.metrics import root_mean_squared_error, r2_score
+        from sklearn.metrics import root_mean_squared_error, r2_score, mean_squared_error, mean_absolute_error
         
         # 打印目标值的范围信息
-        print(f"目标值范围: [{y.min():.3f}, {y.max():.3f}]")
-        print(f"目标值统计:\n均值: {y.mean():.3f}\n标准差: {y.std():.3f}\n中位数: {y.median():.3f}\n")
-        
+        print("[luna]> 目标值统计:")
+        stats_table = [["最小值", "最大值", "均值", "标准差", "中位数"],
+                      [f"{y.min():.2f}", f"{y.max():.2f}", f"{y.mean():.2f}", 
+                       f"{y.std():.2f}", f"{y.median():.2f}"]]
+        print(tabulate(stats_table, headers="firstrow", tablefmt="grid"))
+       
         preds = self.predict(X)
+        rmse = root_mean_squared_error(y, preds)
+        mse = mean_squared_error(y, preds)
+        mae = mean_absolute_error(y, preds)
+        r2 = r2_score(y, preds)
+        
+        # 打印评估结果
+        print("[luna]> 模型评估结果:")
+        metrics_table = [["指标", "RMSE", "MSE", "MAE", "R²"],
+                        ["值", f"{rmse:.2f}", f"{mse:.2f}", f"{mae:.2f}", f"{r2:.2f}"]]
+        print(tabulate(metrics_table, headers="firstrow", tablefmt="grid"))
+        
         return {
-            "rmse": root_mean_squared_error(y, preds),
-            "r2": r2_score(y, preds)
+            "rmse": rmse,
+            "mse": mse,
+            "mae": mae,
+            "r2": r2
         }
 
 
@@ -58,16 +76,35 @@ class xgb_clf(BaseModel):
         """评估模型性能"""
         from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
         
-        # 直接打印标签信息
-        unique_labels = np.unique(y)
-        print(f"标签取值范围: {unique_labels}, 标签数量: {len(unique_labels)}")
-        print(f"各类别样本数量:\n{y.value_counts()}\n")
+        # 打印标签信息
+        print("[luna]> 标签统计:")
+        class_count_table = [["类别数量", len(np.unique(y))]]
+        print(tabulate(class_count_table, tablefmt="grid"))
         
+        # 构建类别分布表格
+        class_dist_table = [["类别", "样本数量"]]
+        for label, count in y.value_counts().items():
+            class_dist_table.append([label, count])
+        print(tabulate(class_dist_table, headers="firstrow", tablefmt="grid"))
+        
+        # 计算评估指标
         preds = self.predict(X)
+        accuracy = accuracy_score(y, preds)
+        precision = precision_score(y, preds, average='weighted')
+        recall = recall_score(y, preds, average='weighted')
+        f1 = f1_score(y, preds, average='weighted')
+        
+        # 打印评估结果
+        print("[luna]> 模型评估结果:")
+        metrics_table = [["指标", "Accuracy", "Precision", "Recall", "F1"],
+                        ["值", f"{accuracy:.2f}", f"{precision:.2f}", 
+                         f"{recall:.2f}", f"{f1:.2f}"]]
+        print(tabulate(metrics_table, headers="firstrow", tablefmt="grid"))
+        
         return {
-            "accuracy": accuracy_score(y, preds),
-            "precision": precision_score(y, preds, average='weighted'),
-            "recall": recall_score(y, preds, average='weighted'),
-            "f1": f1_score(y, preds, average='weighted')
+            "accuracy": accuracy,
+            "precision": precision,
+            "recall": recall,
+            "f1": f1
         }
 

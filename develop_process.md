@@ -334,11 +334,16 @@ target_analysis.py
 
 #### 增加其他调参方式
 
+调参可视化：参考https://bluecast.readthedocs.io/en/latest/Model%20explainability%20%28XAI%29.html
+
+看看因果推断在这里有什么用：https://erdogant.github.io/bnlearn/pages/html/Examples.html
+
 https://www.kaggle.com/code/thedevastator/the-fine-art-of-hyperparameter-tuning
 
 ### 阶段六：数据处理增强
 
 #### 时间特征处理
+
 ```
 def extract_time_features(
     df: pd.DataFrame,
@@ -347,18 +352,19 @@ def extract_time_features(
 ) -> pd.DataFrame:
     """
     从时间列中提取特征。
-    
+  
     参数：
         df: 原始数据
         time_column: 时间列名
         features: 需要提取的时间特征列表
-    
+  
     返回：
         添加了时间特征的DataFrame
     """
 ```
 
 #### 异常值处理
+
 ```
 def detect_outliers(
     df: pd.DataFrame,
@@ -367,18 +373,19 @@ def detect_outliers(
 ) -> Dict[str, List[int]]:
     """
     检测数值型特征中的异常值。
-    
+  
     参数：
         df: 数据
         method: 检测方法 ["iqr", "zscore", "isolation_forest"]
         threshold: 阈值
-    
+  
     返回：
         各特征异常值的索引字典
     """
 ```
 
 #### 特征选择
+
 ```
 def select_features(
     X: pd.DataFrame,
@@ -388,13 +395,13 @@ def select_features(
 ) -> List[str]:
     """
     选择重要特征。
-    
+  
     参数：
         X: 特征矩阵
         y: 目标变量
         method: 选择方法 ["variance", "mutual_info", "chi2", "lasso"]
         threshold: 选择阈值
-    
+  
     返回：
         选中的特征列表
     """
@@ -403,6 +410,7 @@ def select_features(
 ### 阶段七：模型扩展
 
 #### 集成学习
+
 ```
 class StackingEnsemble(BaseModel):
     def __init__(
@@ -413,7 +421,7 @@ class StackingEnsemble(BaseModel):
     ):
         """
         初始化Stacking集成模型。
-        
+      
         参数：
             base_models: 基础模型列表
             meta_model: 元模型
@@ -422,6 +430,7 @@ class StackingEnsemble(BaseModel):
 ```
 
 #### AutoML
+
 ```
 class AutoML:
     def __init__(
@@ -432,7 +441,7 @@ class AutoML:
     ):
         """
         初始化AutoML系统。
-        
+      
         参数：
             task_type: 任务类型 ["classification", "regression"]
             time_limit: 时间限制（秒）
@@ -441,23 +450,24 @@ class AutoML:
 ```
 
 #### 模型解释
+
 ```
 class ModelExplainer:
     def __init__(self, model: BaseModel):
         """
         初始化模型解释器。
-        
+      
         参数：
             model: 需要解释的模型
         """
-    
+  
     def explain_prediction(self, X: pd.DataFrame) -> Dict:
         """
         解释模型预测。
-        
+      
         参数：
             X: 特征矩阵
-        
+      
         返回：
             预测解释结果
         """
@@ -466,46 +476,48 @@ class ModelExplainer:
 ### 阶段八：实验管理
 
 #### 实验追踪
+
 ```
 class ExperimentTracker:
     def __init__(self, experiment_name: str):
         """
         初始化实验追踪器。
-        
+      
         参数：
             experiment_name: 实验名称
         """
-    
+  
     def log_params(self, params: Dict) -> None:
         """记录实验参数"""
-    
+  
     def log_metrics(self, metrics: Dict) -> None:
         """记录实验指标"""
-    
+  
     def log_artifact(self, path: str) -> None:
         """记录实验产物"""
 ```
 
 #### 模型版本控制
+
 ```
 class ModelVersionControl:
     def __init__(self, model_dir: str):
         """
         初始化模型版本控制系统。
-        
+      
         参数：
             model_dir: 模型存储目录
         """
-    
+  
     def save_version(self, model: BaseModel, version: str) -> None:
         """保存模型版本"""
-    
+  
     def load_version(self, version: str) -> BaseModel:
         """加载模型版本"""
 ```
 
-
 #### 批处理管道
+
 ```
 class BatchProcessor:
     def __init__(
@@ -516,13 +528,13 @@ class BatchProcessor:
     ):
         """
         初始化批处理器。
-        
+      
         参数：
             model: 预测模型
             batch_size: 批处理大小
             max_workers: 最大工作进程数
         """
-    
+  
     def process(self, data: pd.DataFrame) -> pd.DataFrame:
         """执行批处理预测"""
 ```
@@ -530,37 +542,36 @@ class BatchProcessor:
 ### 阶段十：性能优化
 
 #### 并行处理
+
 ```
 class ParallelProcessor:
     def __init__(self, n_jobs: int = -1):
         """
         初始化并行处理器。
-        
+      
         参数：
             n_jobs: 并行任务数，-1表示使用所有CPU
         """
-    
+  
     def parallel_apply(self, func: Callable, data: List) -> List:
         """并行执行函数"""
 ```
 
-
-
 #### 实时监控
+
 ```
 class TrainingMonitor:
     def __init__(self, update_interval: int = 1):
         """
         初始化训练监控器。
-        
+      
         参数：
             update_interval: 更新间隔（秒）
         """
-    
+  
     def start_monitoring(self) -> None:
         """开始监控"""
-    
+  
     def stop_monitoring(self) -> None:
         """停止监控"""
 ```
-
