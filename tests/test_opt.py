@@ -1,23 +1,22 @@
 """
-测试luna中的hyper_opt模块
+测试luna的hyper_opt模块
 python -m pytest tests/test_opt.py -v
 """
 import pytest
 import pandas as pd
 import numpy as np
-from luna.models import xgb_reg
 from luna.hyper_opt import OptunaTuner
+from xgboost import XGBRegressor, XGBClassifier
 
 @pytest.fixture
-def sample_tuning_data():
-    """生成超参数调优测试数据"""
+def sample_regression_data():
+    """生成回归测试数据"""
     np.random.seed(42)
     X = pd.DataFrame({
         'feature1': np.random.normal(0, 1, 200),
         'feature2': np.random.normal(0, 1, 200),
         'feature3': np.random.normal(0, 1, 200)
     })
-    # 确保生成一维的目标变量
     y = pd.Series(2 * X['feature1'] + X['feature2'] - 0.5 * X['feature3'] + np.random.normal(0, 0.1, 200))
     
     # 划分训练集和验证集
@@ -25,52 +24,111 @@ def sample_tuning_data():
     X_train, X_val = X[:train_size], X[train_size:]
     y_train, y_val = y[:train_size], y[train_size:]
     
-    # 确保 y 是一维的
-    y_train = pd.Series(y_train)
-    y_val = pd.Series(y_val)
+    return X_train, X_val, y_train, y_val
+
+@pytest.fixture
+def sample_classification_data():
+    """生成分类测试数据"""
+    np.random.seed(42)
+    X = pd.DataFrame({
+        'feature1': np.random.normal(0, 1, 200),
+        'feature2': np.random.normal(0, 1, 200),
+        'feature3': np.random.normal(0, 1, 200)
+    })
+    # 生成二分类标签
+    y = pd.Series((X['feature1'] + X['feature2'] > 0).astype(int))
+    
+    # 划分训练集和验证集
+    train_size = int(len(X) * 0.8)
+    X_train, X_val = X[:train_size], X[train_size:]
+    y_train, y_val = y[:train_size], y[train_size:]
     
     return X_train, X_val, y_train, y_val
 
 class TestOptunaTuner:
-    def test_init(self):
-        """测试调优器初始化"""
+    def test_init_default(self):
+        """测试默认初始化"""
         tuner = OptunaTuner()
         assert tuner is not None
+        assert tuner.n_trials == 50
+        assert tuner.metric_name is None
+        assert tuner.timeout is None
         
-    def test_optimize(self, sample_tuning_data):
-        """测试超参数优化"""
-        X_train, X_val, y_train, y_val = sample_tuning_data
-        tuner = OptunaTuner()
+    def test_init_custom(self):
+        """测试自定义参数初始化"""
+        param_space = {
+            'max_depth': ('int', 3, 10),
+            'learning_rate': ('float', 0.01, 0.3)
+        }
+        tuner = OptunaTuner(param_space=param_space, n_trials=10, metric_name='rmse', timeout=60)
+        assert tuner.param_space == param_space
+        assert tuner.n_trials == 10
+        assert tuner.metric_name == 'rmse'
+        assert tuner.timeout == 60
         
-        best_params = tuner.optimize(
+    def test_regression_optimize(self, sample_regression_data):
+        """测试回归模型优化"""
+        X_train, X_val, y_train, y_val = sample_regression_data
+        tuner = OptunaTuner(n_trials=2, metric_name='rmse')  # 使用较少的trials加快测试
+        
+        result = tuner.optimize(
             'XGBRegressor',
-            X_train.values,
-            X_val.values,
-            y_train.values,
-            y_val.values,
+            X_train, y_train,
+            X_val, y_val
         )
         
-        assert isinstance(best_params, dict)
-        assert len(best_params) > 0
+        assert isinstance(result, dict)
+        assert 'best_params' in result
+        assert 'best_value' in result
+        assert 'n_trials' in result
+        assert 'study' in result
+        assert result['n_trials'] == 2
         
-    def test_get_best_model(self, sample_tuning_data):
-        """测试获取最优模型"""
-        X_train, X_val, y_train, y_val = sample_tuning_data
-        tuner = OptunaTuner()
+    def test_classification_optimize(self, sample_classification_data):
+        """测试分类模型优化"""
+        X_train, X_val, y_train, y_val = sample_classification_data
+        tuner = OptunaTuner(n_trials=2, metric_name='accuracy')  # 使用较少的trials加快测试
         
-        # 先进行优化
-        tuner.optimize(
-            'XGBRegressor', 
-            X_train.values,  # 转换为numpy数组
-            X_val.values,    # 转换为numpy数组
-            y_train.values,  # 转换为numpy数组
-            y_val.values,    # 转换为numpy数组
+        result = tuner.optimize(
+            'XGBClassifier',
+            X_train, y_train,
+            X_val, y_val
         )
         
-        # 获取最优模型
-        best_model=xgb_reg(tuner.best_params)
-        assert isinstance(best_model, xgb_reg)  # 修正类型检查
-        # 测试模型可以正常预测
-        preds = best_model.predict(X_val)
-        assert isinstance(preds, np.ndarray)
-        assert len(preds) == len(y_val)
+        assert isinstance(result, dict)
+        assert 'best_params' in result
+        assert 'best_value' in result
+        assert 'n_trials' in result
+        assert 'study' in result
+        assert result['n_trials'] == 2
+        
+    def test_custom_param_space(self, sample_regression_data):
+        """测试自定义参数空间"""
+        X_train, X_val, y_train, y_val = sample_regression_data
+        param_space = {
+            'max_depth': ('int', 3, 5),
+            'learning_rate': ('float', 0.1, 0.2),
+            'booster': ('categorical', ['gbtree'])
+        }
+        tuner = OptunaTuner(param_space=param_space, n_trials=2)
+        
+        result = tuner.optimize(
+            'XGBRegressor',
+            X_train, y_train,
+            X_val, y_val
+        )
+        
+        assert isinstance(result['best_params'], dict)
+        assert all(k in result['best_params'] for k in param_space.keys())
+        
+    def test_invalid_model_type(self, sample_regression_data):
+        """测试无效的模型类型"""
+        X_train, X_val, y_train, y_val = sample_regression_data
+        tuner = OptunaTuner(n_trials=2)
+        
+        with pytest.raises(ValueError):
+            tuner.optimize(
+                'InvalidModel',
+                X_train, y_train,
+                X_val, y_val
+            )
