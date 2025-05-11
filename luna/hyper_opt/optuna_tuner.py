@@ -37,7 +37,7 @@ class OptunaTuner(BaseTuner):
         self.best_params = None
         self.best_value = None
         
-    def _objective(self, trial, model_class:str, X_train, y_train, X_val, y_val):
+    def _objective(self, trial, model_class:str, X_train, y_train, X_val, y_val)->float:
         """
         优化目标函数
         """
