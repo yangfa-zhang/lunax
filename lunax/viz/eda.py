@@ -44,7 +44,7 @@ def numeric_eda(df_list:List[pd.DataFrame],label_list: List[str],target:str, cus
         df['Dataset'] = label
     for col in numeric_cols:
         sns.set_style('whitegrid')
-        fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+        fig, axes = plt.subplots(1, 2, figsize=(12, 4),dpi=150)
 
         # 箱型图
         plt.subplot(1, 2, 1)
@@ -106,7 +106,7 @@ def categoric_eda(df_list:List[pd.DataFrame],label_list: List[str],target:str, c
         categoric_cols.remove(target)            
     for col in categoric_cols:
         sns.set_style('whitegrid')
-        fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+        fig, axes = plt.subplots(1, 2, figsize=(12, 4),dpi=150)
 
         # 饼图
         plt.subplot(1, 2, 1)

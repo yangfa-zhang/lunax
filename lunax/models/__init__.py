@@ -1,1 +1,1 @@
-from .tree_models import xgb_reg, xgb_clf
+from .tree_models import xgb_reg, xgb_clf,lgb_clf,lgb_reg

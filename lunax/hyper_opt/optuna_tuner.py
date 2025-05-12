@@ -69,7 +69,7 @@ class OptunaTuner(BaseTuner):
                         'min_child_weight': trial.suggest_int('min_child_weight', 0, 10),
                         'grow_policy': trial.suggest_categorical('grow_policy', ['depthwise', 'lossguide']),
                     })
-            elif model_class in []:
+            elif model_class in ['LGBMRegressor', 'LGBMClassifier']:
                 params = {
                     'max_depth': trial.suggest_int('max_depth', 3, 10),
                     'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3),
