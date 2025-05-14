@@ -1,9 +1,9 @@
-
+[中文](README.md) | [EN](README.EN.md)
 ### 
 
 <div>
 
-<a href="https://erdogant.github.io/bnlearn/"><img src="./imgs/luna.jpg" width="100" align="left" /></a>``lunax`` 是一个专门用于表格类型数据的机器学习框架。 luna是图中这只小猫的名字，来自华南理工大学大学城校区生活区羽毛球场。**⭐️ 如果喜欢，欢迎点个star ⭐️**
+<a href="https://github.com/yangfa-zhang/lunax"><img src="./imgs/luna.jpg" width="90" align="left" /></a>``lunax`` 是一个用于表格数据处理分析的机器学习框架。 lunax这个名字来自于图中的这只可爱的小猫，是华南理工大学最受欢迎的小猫**luna**。**⭐️ 如果喜欢，欢迎点个star ⭐️**
 </div>
 
 ---
@@ -16,8 +16,8 @@ pip install lunax
 ```
 
 ### 已有功能
-- 数据加载和处理
+- 数据加载和预处理
 - EDA分析
 - 自动化机器学习建模
 - 模型评估和解释
-- 数据可视化
+
