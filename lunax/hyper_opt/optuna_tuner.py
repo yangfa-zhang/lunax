@@ -46,16 +46,33 @@ class OptunaTuner(BaseTuner):
         if self.param_space is None:
             # 根据模型类名定义参数搜索空间
             if model_class in ['XGBRegressor', 'XGBClassifier']:
+                # XGBoost 参数说明
+                print(f"[lunax]> XGBoost Parameter Explanations:")
+                print("[Model complexity parameters]>")
+                print("- lambda: \tL2 regularization. Smoother than L1. Better for sparse data. Prevents overfitting.")
+                print("- reg_lambda/alpha: \tRegularization. Control model complexity. Prevents overfitting.")
+                print("- gamma: \tTREE ONLY. Minimum loss reduction for split. Prevents overfitting.")
+                print("- max_depth: \tHigher = more complex model. Prevents overfitting.")
+                print("- subsample: \tNumber of samples per tree. Prevents overfitting.")
+                print("- colsample_bytree: \tFraction of features used per tree. Prevents overfitting.")
+                print("- min_child_weight: \tMinimum sum of instance weight in a child. Prevents overfitting.")
+                print("\n")
+                print("[Training and Optimization Parameters]>")
+                print("- eta: \tLearning rate.")
+                print("- booster: \t\"gbtree\" for nonlinear features. \"gblinear\" for linear features")
+                print("- grow_policy: \tControls how new nodes are added to the tree. \"lossguide\" for best split. \"depthwise\" for best depth.")
+                print("\n")
+                
                 # 首先选择booster类型
                 booster = trial.suggest_categorical('booster', ['gbtree', 'gblinear'])
                 
                 # 基础参数
                 params = {
                     'booster': booster,
-                    'seed': trial.suggest_int('seed', 0, 0),
-                    'eta': trial.suggest_float('eta', 0.01, 0.1),
-                    'lambda': trial.suggest_float('lambda', 0.0, 100),
-                    'reg_lambda': trial.suggest_float('reg_lambda', 0, 1),
+                    'seed': trial.suggest_int('seed', 0, 0), # 随机种子
+                    'eta': trial.suggest_float('eta', 0.01, 0.2), # 学习率
+                    'lambda': trial.suggest_float('lambda', 0.0, 100), # L2正则化参数，权重永远不会等于零，比 Alpha 更平滑
+                    'reg_lambda': trial.suggest_float('reg_lambda', 0, 1), 
                     'reg_alpha': trial.suggest_int('reg_alpha', 40, 180),
                 }
                 
