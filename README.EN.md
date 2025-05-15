@@ -3,7 +3,8 @@
 
 <div>
 
-<a href="https://github.com/yangfa-zhang/lunax"><img src="./imgs/luna.jpg" width="138" align="left" /></a>``Lunax`` is a machine learning framework specifically designed for the processing and analysis of tabular data. The name **Lunax** is derived from the name of a beloved feline mascot at South China University of Technology  **⭐️ Star it if you like it ⭐️**
+<a href="https://github.com/yangfa-zhang/lunax"><img src="./imgs/luna.jpg" width="138" align="left" /></a>``Lunax`` is a machine learning framework specifically designed for the processing and analysis of tabular data. The name **Lunax** is derived from the name of a beloved feline mascot at South China University of Technology 
+**⭐️ Star it if you like it ⭐️**
 </div>
 
 ---
@@ -32,8 +33,8 @@ X_train, X_val, y_train, y_val = split_data(df_train, target)
 #### Exploratory Data Analysis
 ```
 from lunax.viz import numeric_eda, categoric_eda
-numeric_eda([df_train,df_test],['train','test'],target='标签列名') # numeric feature analysis
-categoric_eda([df_train,df_test],['train','test'],target='标签列名') # categorical feature analysis
+numeric_eda([df_train,df_test],['train','test'],target=target) # numeric feature analysis
+categoric_eda([df_train,df_test],['train','test'],target=target) # categorical feature analysis
 ```
 #### Automation Machine Learning Modeling
 ```

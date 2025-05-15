@@ -33,8 +33,8 @@ X_train, X_val, y_train, y_val = split_data(df_train, target)
 #### EDA分析
 ```
 from lunax.viz import numeric_eda, categoric_eda
-numeric_eda([df_train,df_test],['train','test'],target='标签列名') # 数值型特征分析
-categoric_eda([df_train,df_test],['train','test'],target='标签列名') # 类别型特征分析
+numeric_eda([df_train,df_test],['train','test'],target=target) # 数值型特征分析
+categoric_eda([df_train,df_test],['train','test'],target=target) # 类别型特征分析
 ```
 #### 自动化机器学习建模
 ```
