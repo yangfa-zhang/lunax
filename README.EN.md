@@ -10,7 +10,7 @@
 ---
 
 ### Installation
-```Python
+```bash
 conda create -n your_env_name python=3.11
 conda activate your_env_name
 pip install lunax

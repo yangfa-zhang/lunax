@@ -9,7 +9,7 @@
 ---
 
 ### 如何下载
-```Python
+```bash
 conda create -n 你的环境名 python=3.11
 conda activate 你的环境名
 pip install lunax
