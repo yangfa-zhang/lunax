@@ -106,7 +106,7 @@ class xgb_clf(BaseModel):
         }
 
 
-class lgb_reg(BaseModel):
+class lgbm_reg(BaseModel):
     def __init__(self, params: Optional[Dict] = None):
         """
         初始化LightGBM回归模型。
@@ -153,7 +153,7 @@ class lgb_reg(BaseModel):
         }
 
 
-class lgb_clf(BaseModel):
+class lgbm_clf(BaseModel):
     def __init__(self, params: Optional[Dict] = None):
         """
         初始化LightGBM分类模型。

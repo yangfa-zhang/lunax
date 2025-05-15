@@ -19,3 +19,34 @@ pip install lunax
 - EDA analysis
 - Supports multi-model training and Hyperparameter tuning
 - Comprehensive model evaluation and Explainable AI (XAI)
+
+### Quick Start
+#### Data Loading and Pre-processing
+```
+from lunax.data_processing.utils import *
+df_train = load_data('train.csv') # or df = load_data('train.parquet',mode='parquet')
+target = 'label_column_name'
+df_train = preprocess_data(df_train,target) # data pre-processing, including missing value handling, feature encoding, feature scaling
+X_train, X_val, y_train, y_val = split_data(df_train, target)
+```
+#### Exploratory Data Analysis
+```
+from lunax.viz import numeric_eda, categoric_eda
+numeric_eda([df_train,df_test],['train','test'],target='标签列名') # numeric feature analysis
+categoric_eda([df_train,df_test],['train','test'],target='标签列名') # categorical feature analysis
+```
+#### Automation Machine Learning Modeling
+```
+from lunax.models import xgb_clf # or xgb_reg, lgbm_reg, lgbm_clf
+from lunax.hyper_opt import OptunaTuner
+tuner = OptunaTuner(n_trials=10) # Hyperparameter optimizer, n_trials is the number of optimization times
+results = tuner.optimize("XGBClassifier", # or "XGBRegressor", "LGBMRegressor", "LGBMClassifier"
+            X_train, y_train, X_val, y_val)
+best_params = results['best_params']
+model = xgb_clf(best_params)
+model.fit(X_train, y_train)
+```
+#### Model Evaluation and Explainable AI (XAI)
+```
+model.evaluate(X_val, y_val)
+```

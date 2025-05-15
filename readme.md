@@ -21,3 +21,33 @@ pip install lunax
 - 自动化机器学习建模
 - 模型评估和解释
 
+### 快速开始
+#### 数据加载和预处理
+```
+from lunax.data_processing.utils import *
+df_train = load_data('train.csv') # 或者 df = load_data('train.parquet',mode='parquet')
+target = '标签列名'
+df_train = preprocess_data(df_train,target) # 数据预处理, 包括缺失值处理, 特征编码, 特征缩放
+X_train, X_val, y_train, y_val = split_data(df_train, target)
+```
+#### EDA分析
+```
+from lunax.viz import numeric_eda, categoric_eda
+numeric_eda([df_train,df_test],['train','test'],target='标签列名') # 数值型特征分析
+categoric_eda([df_train,df_test],['train','test'],target='标签列名') # 类别型特征分析
+```
+#### 自动化机器学习建模
+```
+from lunax.models import xgb_clf # 或者 xgb_reg, lgbm_reg, lgbm_clf
+from lunax.hyper_opt import OptunaTuner
+tuner = OptunaTuner(n_trials=10) # 定义超参数优化器, n_trials为优化次数
+results = tuner.optimize("XGBClassifier", # 或者 "XGBRegressor", "LGBMRegressor", "LGBMClassifier"
+            X_train, y_train, X_val, y_val)
+best_params = results['best_params']
+model = xgb_clf(best_params)
+model.fit(X_train, y_train)
+```
+#### 模型评估和解释
+```
+model.evaluate(X_val, y_val)
+```
