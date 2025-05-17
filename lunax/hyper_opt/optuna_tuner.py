@@ -101,8 +101,11 @@ class OptunaTuner(BaseTuner):
                     'colsample_bytree': trial.suggest_float('colsample_bytree', 0.5, 1),
                     'reg_alpha': trial.suggest_float('reg_alpha', 0, 1),
                     'reg_lambda': trial.suggest_float('reg_lambda', 0, 1),
-                    'objective': trial.suggest_categorical('objective', ['regression', 'binary', 'multiclass'])
                 }
+                if self.model_class == 'LGBMClassifier':
+                    params['objective'] = 'binary'
+                elif self.model_class == 'LGBMRegressor':
+                    params['objective'] = 'regression'
         else:
             # 如果提供了自定义参数空间
             for param_name, (param_type, *args) in self.param_space.items():

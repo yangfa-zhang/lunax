@@ -69,36 +69,42 @@ class TestOptunaTuner:
     def test_regression_optimize(self, sample_regression_data):
         """测试回归模型优化"""
         X_train, X_val, y_train, y_val = sample_regression_data
-        tuner = OptunaTuner(n_trials=2, metric_name='rmse',model_class='XGBRegressor')  # 使用较少的trials加快测试
+        model_classes = ['XGBRegressor', 'LGBMRegressor']
         
-        result = tuner.optimize(
-            X_train, y_train,
-            X_val, y_val
-        )
-        
-        assert isinstance(result, dict)
-        assert 'best_params' in result
-        assert 'best_value' in result
-        assert 'n_trials' in result
-        assert 'study' in result
-        assert result['n_trials'] == 2
+        for model_class in model_classes:
+            tuner = OptunaTuner(n_trials=2, metric_name='rmse', model_class=model_class)
+            
+            result = tuner.optimize(
+                X_train, y_train,
+                X_val, y_val
+            )
+            
+            assert isinstance(result, dict)
+            assert 'best_params' in result
+            assert 'best_value' in result
+            assert 'n_trials' in result
+            assert 'study' in result
+            assert result['n_trials'] == 2
         
     def test_classification_optimize(self, sample_classification_data):
         """测试分类模型优化"""
         X_train, X_val, y_train, y_val = sample_classification_data
-        tuner = OptunaTuner(n_trials=2, metric_name='accuracy',model_class='XGBClassifier')  # 使用较少的trials加快测试
+        model_classes = ['XGBClassifier', 'LGBMClassifier']
         
-        result = tuner.optimize(
-            X_train, y_train,
-            X_val, y_val
-        )
-        
-        assert isinstance(result, dict)
-        assert 'best_params' in result
-        assert 'best_value' in result
-        assert 'n_trials' in result
-        assert 'study' in result
-        assert result['n_trials'] == 2
+        for model_class in model_classes:
+            tuner = OptunaTuner(n_trials=2, metric_name='accuracy', model_class=model_class)
+            
+            result = tuner.optimize(
+                X_train, y_train,
+                X_val, y_val
+            )
+            
+            assert isinstance(result, dict)
+            assert 'best_params' in result
+            assert 'best_value' in result
+            assert 'n_trials' in result
+            assert 'study' in result
+            assert result['n_trials'] == 2
         
     def test_custom_param_space(self, sample_regression_data):
         """测试自定义参数空间"""
