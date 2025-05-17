@@ -40,9 +40,8 @@ categoric_eda([df_train,df_test],['train','test'],target=target) # 类别型特�
 ```Python
 from lunax.models import xgb_clf # 或者 xgb_reg, lgbm_reg, lgbm_clf
 from lunax.hyper_opt import OptunaTuner
-tuner = OptunaTuner(n_trials=10) # 定义超参数优化器, n_trials为优化次数
-results = tuner.optimize("XGBClassifier", # 或者 "XGBRegressor", "LGBMRegressor", "LGBMClassifier"
-            X_train, y_train, X_val, y_val)
+tuner = OptunaTuner(n_trials=10,model_class="XGBClassifier") # 或者 "XGBRegressor", "LGBMRegressor", "LGBMClassifier") , n_trials为优化次数
+results = tuner.optimize(X_train, y_train, X_val, y_val)
 best_params = results['best_params']
 model = xgb_clf(best_params)
 model.fit(X_train, y_train)

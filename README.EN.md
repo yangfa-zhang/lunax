@@ -40,9 +40,8 @@ categoric_eda([df_train,df_test],['train','test'],target=target) # categorical f
 ```Python
 from lunax.models import xgb_clf # or xgb_reg, lgbm_reg, lgbm_clf
 from lunax.hyper_opt import OptunaTuner
-tuner = OptunaTuner(n_trials=10) # Hyperparameter optimizer, n_trials is the number of optimization times
-results = tuner.optimize("XGBClassifier", # or "XGBRegressor", "LGBMRegressor", "LGBMClassifier"
-            X_train, y_train, X_val, y_val)
+tuner = OptunaTuner(n_trials=10,model_class="XGBClassifier") # or "XGBRegressor", "LGBMRegressor", "LGBMClassifier" Hyperparameter optimizer, n_trials is the number of optimization times
+results = tuner.optimize(X_train, y_train, X_val, y_val)
 best_params = results['best_params']
 model = xgb_clf(best_params)
 model.fit(X_train, y_train)
