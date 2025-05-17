@@ -69,10 +69,9 @@ class TestOptunaTuner:
     def test_regression_optimize(self, sample_regression_data):
         """测试回归模型优化"""
         X_train, X_val, y_train, y_val = sample_regression_data
-        tuner = OptunaTuner(n_trials=2, metric_name='rmse')  # 使用较少的trials加快测试
+        tuner = OptunaTuner(n_trials=2, metric_name='rmse',model_class='XGBRegressor')  # 使用较少的trials加快测试
         
         result = tuner.optimize(
-            'XGBRegressor',
             X_train, y_train,
             X_val, y_val
         )
@@ -87,10 +86,9 @@ class TestOptunaTuner:
     def test_classification_optimize(self, sample_classification_data):
         """测试分类模型优化"""
         X_train, X_val, y_train, y_val = sample_classification_data
-        tuner = OptunaTuner(n_trials=2, metric_name='accuracy')  # 使用较少的trials加快测试
+        tuner = OptunaTuner(n_trials=2, metric_name='accuracy',model_class='XGBClassifier')  # 使用较少的trials加快测试
         
         result = tuner.optimize(
-            'XGBClassifier',
             X_train, y_train,
             X_val, y_val
         )
@@ -110,10 +108,9 @@ class TestOptunaTuner:
             'learning_rate': ('float', 0.1, 0.2),
             'booster': ('categorical', ['gbtree'])
         }
-        tuner = OptunaTuner(param_space=param_space, n_trials=2)
+        tuner = OptunaTuner(param_space=param_space, n_trials=2,model_class='XGBRegressor')
         
         result = tuner.optimize(
-            'XGBRegressor',
             X_train, y_train,
             X_val, y_val
         )
@@ -124,11 +121,10 @@ class TestOptunaTuner:
     def test_invalid_model_type(self, sample_regression_data):
         """测试无效的模型类型"""
         X_train, X_val, y_train, y_val = sample_regression_data
-        tuner = OptunaTuner(n_trials=2)
+        tuner = OptunaTuner(n_trials=2,model_class='InvalidModel')
         
         with pytest.raises(ValueError):
             tuner.optimize(
-                'InvalidModel',
                 X_train, y_train,
                 X_val, y_val
             )
