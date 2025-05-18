@@ -8,6 +8,28 @@ from xgboost import XGBRegressor,XGBClassifier
 from lightgbm import LGBMRegressor,LGBMClassifier
 from catboost import CatBoostRegressor,CatBoostClassifier
 
+def print_hyperparameters_explanations(model_class:str)->None:
+    """
+    打印模型超参数说明。
+    """
+    if model_class in ['XGBClassifier','XGBRegessor']:
+        # XGBoost 参数说明
+        print(f"[lunax]> XGBoost Parameter Explanations:")
+        print("[Model complexity parameters]>")
+        print("- lambda: \tL2 regularization. Smoother than L1. Better for sparse data. Prevents overfitting.")
+        print("- reg_lambda/alpha: \tRegularization. Control model complexity. Prevents overfitting.")
+        print("- gamma: \tTREE ONLY. Minimum loss reduction for split. Prevents overfitting.")
+        print("- max_depth: \tHigher = more complex model. Prevents overfitting.")
+        print("- subsample: \tNumber of samples per tree. Prevents overfitting.")
+        print("- colsample_bytree: \tFraction of features used per tree. Prevents overfitting.")
+        print("- min_child_weight: \tMinimum sum of instance weight in a child. Prevents overfitting.")
+        print("\n")
+        print("[Training and Optimization Parameters]>")
+        print("- eta: \tLearning rate.")
+        print("- booster: \t\"gbtree\" for nonlinear features. \"gblinear\" for linear features")
+        print("- grow_policy: \tControls how new nodes are added to the tree. \"lossguide\" for best split. \"depthwise\" for best depth.")
+        print("\n")
+
 class OptunaTuner(BaseTuner):
     def __init__(self, 
                  param_space: Dict[str, Tuple]=None,
@@ -39,23 +61,7 @@ class OptunaTuner(BaseTuner):
         self.best_value = None
         self.model_class = model_class
         # 打印超参数说明
-        if self.model_class in ['XGBClassifier','XGBRegessor']:
-            # XGBoost 参数说明
-            print(f"[lunax]> XGBoost Parameter Explanations:")
-            print("[Model complexity parameters]>")
-            print("- lambda: \tL2 regularization. Smoother than L1. Better for sparse data. Prevents overfitting.")
-            print("- reg_lambda/alpha: \tRegularization. Control model complexity. Prevents overfitting.")
-            print("- gamma: \tTREE ONLY. Minimum loss reduction for split. Prevents overfitting.")
-            print("- max_depth: \tHigher = more complex model. Prevents overfitting.")
-            print("- subsample: \tNumber of samples per tree. Prevents overfitting.")
-            print("- colsample_bytree: \tFraction of features used per tree. Prevents overfitting.")
-            print("- min_child_weight: \tMinimum sum of instance weight in a child. Prevents overfitting.")
-            print("\n")
-            print("[Training and Optimization Parameters]>")
-            print("- eta: \tLearning rate.")
-            print("- booster: \t\"gbtree\" for nonlinear features. \"gblinear\" for linear features")
-            print("- grow_policy: \tControls how new nodes are added to the tree. \"lossguide\" for best split. \"depthwise\" for best depth.")
-            print("\n")
+        print_hyperparameters_explanations(self.model_class)
         
     def _objective(self, trial, X_train, y_train, X_val, y_val)->float:
         """
@@ -102,10 +108,24 @@ class OptunaTuner(BaseTuner):
                     'reg_alpha': trial.suggest_float('reg_alpha', 0, 1),
                     'reg_lambda': trial.suggest_float('reg_lambda', 0, 1),
                 }
-                if self.model_class == 'LGBMClassifier':
-                    params['objective'] = 'binary'
-                elif self.model_class == 'LGBMRegressor':
-                    params['objective'] = 'regression'
+            elif self.model_class in ['CatRegressor','CatClassifier']:
+                params = {
+                    "colsample_bylevel": trial.suggest_float("colsample_bylevel", 0.01, 0.1),
+                    "depth": trial.suggest_int("depth", 1, 12),
+                    "boosting_type": trial.suggest_categorical("boosting_type", ["Ordered", "Plain"]),
+                    "bootstrap_type": trial.suggest_categorical(
+                        "bootstrap_type", ["Bayesian", "Bernoulli", "MVS"]
+                    ),
+                    "used_ram_limit": "3gb",
+                }
+                if params["bootstrap_type"] == "Bayesian":
+                    params["bagging_temperature"] = trial.suggest_float("bagging_temperature", 0, 10)
+                elif params["bootstrap_type"] == "Bernoulli":
+                    params["subsample"] = trial.suggest_float("subsample", 0.1, 1)
+                if self.model_class == 'CatRegressor':
+                    params["eval_metric"] = "RMSE"
+                else:
+                    params["eval_metric"] = "Logloss"
         else:
             # 如果提供了自定义参数空间
             for param_name, (param_type, *args) in self.param_space.items():
@@ -117,13 +137,13 @@ class OptunaTuner(BaseTuner):
                     params[param_name] = trial.suggest_categorical(param_name, args[0])
         
         # 区分分类模型和回归模型
-        if self.model_class in ['XGBRegressor', 'LGBMRegressor', 'CatBoostRegressor']:
+        if self.model_class in ['XGBRegressor', 'LGBMRegressor', 'CatRegressor']:
             # 训练回归模型
             if self.model_class == 'XGBRegressor':
                 model = XGBRegressor(**params)
             elif self.model_class == 'LGBMRegressor':
                 model = LGBMRegressor(**params)
-            elif self.model_class == 'CatBoostRegressor':
+            elif self.model_class == 'CatRegressor':
                 model = CatBoostRegressor(**params)
 
             model.fit(X_train, y_train)
@@ -146,13 +166,13 @@ class OptunaTuner(BaseTuner):
                 raise ValueError(f"Unsupported metric: {self.metric_name}, supported metrics: {metrics.keys()}")
             
             return metrics[self.metric_name]
-        elif self.model_class in ['XGBClassifier', 'LGBMClassifier', 'CatBoostClassifier']:
+        elif self.model_class in ['XGBClassifier', 'LGBMClassifier', 'CatClassifier']:
             # 训练分类模型
             if self.model_class == 'XGBClassifier':
                 model = XGBClassifier(**params)
             elif self.model_class == 'LGBMClassifier':
                 model = LGBMClassifier(**params)
-            elif self.model_class == 'CatBoostClassifier':
+            elif self.model_class == 'CatClassifier':
                 model = CatBoostClassifier(**params)
 
             model.fit(X_train, y_train)
@@ -176,7 +196,7 @@ class OptunaTuner(BaseTuner):
             
             return metrics[self.metric_name]
         else:
-            raise ValueError(f"Unsupported model type: {model_class.__name__}")
+            raise ValueError(f"Unsupported model type: {self.model_class}")
 
     def optimize(self, 
                 X_train: pd.DataFrame, 
@@ -196,9 +216,9 @@ class OptunaTuner(BaseTuner):
             Dict: 包含最优参数和对应的评估指标值
         """
         # 根据模型类型确定优化方向
-        if self.model_class in ['XGBRegressor', 'LGBMRegressor', 'CatBoostRegressor']:
+        if self.model_class in ['XGBRegressor', 'LGBMRegressor', 'CatRegressor']:
             direction = "minimize"
-        elif self.model_class in ['XGBClassifier', 'LGBMClassifier', 'CatBoostClassifier']:
+        elif self.model_class in ['XGBClassifier', 'LGBMClassifier', 'CatClassifier']:
             direction = "maximize"
         else:
             raise ValueError(f"Unsupported model type: {self.model_class}")
