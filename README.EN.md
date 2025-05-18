@@ -38,9 +38,10 @@ categoric_eda([df_train,df_test],['train','test'],target=target) # categorical f
 ```
 #### Automation Machine Learning Modeling
 ```Python
-from lunax.models import xgb_clf # or xgb_reg, lgbm_reg, lgbm_clf
+from lunax.models import xgb_clf # or xgb_reg, lgbm_reg, lgbm_clf, cat_clf, cat_reg
 from lunax.hyper_opt import OptunaTuner
-tuner = OptunaTuner(n_trials=10,model_class="XGBClassifier") # or "XGBRegressor", "LGBMRegressor", "LGBMClassifier" Hyperparameter optimizer, n_trials is the number of optimization times
+tuner = OptunaTuner(n_trials=10,model_class="XGBClassifier") # Hyperparameter optimizer, n_trials is the number of optimization times
+# or "XGBRegressor", "LGBMRegressor", "LGBMClassifier" , "CatClassifier", "CatRegressor"
 results = tuner.optimize(X_train, y_train, X_val, y_val)
 best_params = results['best_params']
 model = xgb_clf(best_params)

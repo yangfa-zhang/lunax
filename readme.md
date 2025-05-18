@@ -38,9 +38,10 @@ categoric_eda([df_train,df_test],['train','test'],target=target) # 类别型特�
 ```
 #### 自动化机器学习建模
 ```Python
-from lunax.models import xgb_clf # 或者 xgb_reg, lgbm_reg, lgbm_clf
+from lunax.models import xgb_clf # 或者 xgb_reg, lgbm_reg, lgbm_clf, cat_reg, cat_clf
 from lunax.hyper_opt import OptunaTuner
-tuner = OptunaTuner(n_trials=10,model_class="XGBClassifier") # 或者 "XGBRegressor", "LGBMRegressor", "LGBMClassifier") , n_trials为优化次数
+tuner = OptunaTuner(n_trials=10,model_class="XGBClassifier") # 超参数优化, n_trials为优化次数
+# 或者 "XGBRegressor", "LGBMRegressor", "LGBMClassifier", "CatRegressor", "CatClassifier"
 results = tuner.optimize(X_train, y_train, X_val, y_val)
 best_params = results['best_params']
 model = xgb_clf(best_params)
