@@ -8,6 +8,57 @@ from tabulate import tabulate
 from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.metrics import mean_squared_error, r2_score, accuracy_score, f1_score
 
+# 交叉验证训练
+def _cross_validate(model, X: pd.DataFrame, y: pd.Series, k_fold: int, 
+                   is_classifier: bool = False) -> None:
+    """
+    执行k折交叉验证
+    
+    参数：
+        model: 模型实例
+        X: 特征数据
+        y: 目标变量
+        k_fold: 交叉验证折数
+        is_classifier: 是否为分类模型
+    """
+    # 选择合适的交叉验证方式
+    if is_classifier:
+        kf = StratifiedKFold(n_splits=k_fold, shuffle=True, random_state=42)
+        split_data = kf.split(X, y)
+    else:
+        kf = KFold(n_splits=k_fold, shuffle=True, random_state=42)
+        split_data = kf.split(X)
+        
+    fold_scores = []
+    
+    for fold, (train_idx, val_idx) in enumerate(split_data, 1):
+        X_train, X_val = X.iloc[train_idx], X.iloc[val_idx]
+        y_train, y_val = y.iloc[train_idx], y.iloc[val_idx]
+        
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_val)
+        
+        if is_classifier:
+            acc = accuracy_score(y_val, y_pred)
+            f1 = f1_score(y_val, y_pred, average='weighted')
+            fold_scores.append({'accuracy': acc, 'f1': f1})
+            print(f"[lunax]> Fold {fold}/{k_fold} - Accuracy: {acc:.4f}, F1: {f1:.4f}")
+        else:
+            mse = mean_squared_error(y_val, y_pred)
+            r2 = r2_score(y_val, y_pred)
+            fold_scores.append({'mse': mse, 'r2': r2})
+            print(f"[lunax]> Fold {fold}/{k_fold} - MSE: {mse:.4f}, R2: {r2:.4f}")
+    
+    # 计算平均分数
+    if is_classifier:
+        avg_acc = np.mean([score['accuracy'] for score in fold_scores])
+        avg_f1 = np.mean([score['f1'] for score in fold_scores])
+        print(f"[lunax]> Average scores - Accuracy: {avg_acc:.4f}, F1: {avg_f1:.4f}")
+    else:
+        avg_mse = np.mean([score['mse'] for score in fold_scores])
+        avg_r2 = np.mean([score['r2'] for score in fold_scores])
+        print(f"[lunax]> Average scores - MSE: {avg_mse:.4f}, R2: {avg_r2:.4f}")
+
 class xgb_reg(BaseModel):
     def __init__(self, params: Optional[Dict] = None):
         """
@@ -18,7 +69,7 @@ class xgb_reg(BaseModel):
         """
         self.model = XGBRegressor(**(params or {}))
 
-    def fit(self, X: pd.DataFrame, y: pd.Series, k_fold: int = None) -> None:
+    def fit(self, X: pd.DataFrame, y: pd.Series, k_fold: Optional[int] = None) -> None:
         """
         训练模型，支持 k 折交叉验证
 
@@ -32,27 +83,8 @@ class xgb_reg(BaseModel):
             self.model.fit(X, y)
             print("[lunax]> model training finished.")
             return
-
-        kf = KFold(n_splits=k_fold, shuffle=True, random_state=42)
-        fold_scores = []
         
-        for fold, (train_idx, val_idx) in enumerate(kf.split(X), 1):
-            X_train, X_val = X.iloc[train_idx], X.iloc[val_idx]
-            y_train, y_val = y.iloc[train_idx], y.iloc[val_idx]
-            
-            self.model.fit(X_train, y_train)
-            y_pred = self.model.predict(X_val)
-            
-            mse = mean_squared_error(y_val, y_pred)
-            r2 = r2_score(y_val, y_pred)
-            fold_scores.append({'mse': mse, 'r2': r2})
-            
-            print(f"[lunax]> Fold {fold}/{k_fold} - MSE: {mse:.4f}, R2: {r2:.4f}")
-        
-        # 计算平均分数
-        avg_mse = np.mean([score['mse'] for score in fold_scores])
-        avg_r2 = np.mean([score['r2'] for score in fold_scores])
-        print(f"[lunax]> Average scores - MSE: {avg_mse:.4f}, R2: {avg_r2:.4f}")
+        _cross_validate(self.model, X, y, k_fold, is_classifier=False)
 
     def predict(self, X: pd.DataFrame) -> np.ndarray:
         return self.model.predict(X)
@@ -111,27 +143,8 @@ class xgb_clf(BaseModel):
             self.model.fit(X, y)
             print("[lunax]> model training finished.")
             return
-
-        skf = StratifiedKFold(n_splits=k_fold, shuffle=True, random_state=42)
-        fold_scores = []
         
-        for fold, (train_idx, val_idx) in enumerate(skf.split(X, y), 1):
-            X_train, X_val = X.iloc[train_idx], X.iloc[val_idx]
-            y_train, y_val = y.iloc[train_idx], y.iloc[val_idx]
-            
-            self.model.fit(X_train, y_train)
-            y_pred = self.model.predict(X_val)
-            
-            acc = accuracy_score(y_val, y_pred)
-            f1 = f1_score(y_val, y_pred, average='weighted')
-            fold_scores.append({'accuracy': acc, 'f1': f1})
-            
-            print(f"[lunax]> Fold {fold}/{k_fold} - Accuracy: {acc:.4f}, F1: {f1:.4f}")
-        
-        # 计算平均分数
-        avg_acc = np.mean([score['accuracy'] for score in fold_scores])
-        avg_f1 = np.mean([score['f1'] for score in fold_scores])
-        print(f"[lunax]> Average scores - Accuracy: {avg_acc:.4f}, F1: {avg_f1:.4f}")
+        _cross_validate(self.model, X, y, k_fold, is_classifier=True)
 
     def predict(self, X: pd.DataFrame) -> np.ndarray:
         return self.model.predict(X)
@@ -197,27 +210,8 @@ class lgbm_reg(BaseModel):
             self.model.fit(X, y)
             print("[lunax]> model training finished.")
             return
-
-        kf = KFold(n_splits=k_fold, shuffle=True, random_state=42)
-        fold_scores = []
         
-        for fold, (train_idx, val_idx) in enumerate(kf.split(X), 1):
-            X_train, X_val = X.iloc[train_idx], X.iloc[val_idx]
-            y_train, y_val = y.iloc[train_idx], y.iloc[val_idx]
-            
-            self.model.fit(X_train, y_train)
-            y_pred = self.model.predict(X_val)
-            
-            mse = mean_squared_error(y_val, y_pred)
-            r2 = r2_score(y_val, y_pred)
-            fold_scores.append({'mse': mse, 'r2': r2})
-            
-            print(f"[lunax]> Fold {fold}/{k_fold} - MSE: {mse:.4f}, R2: {r2:.4f}")
-        
-        # 计算平均分数
-        avg_mse = np.mean([score['mse'] for score in fold_scores])
-        avg_r2 = np.mean([score['r2'] for score in fold_scores])
-        print(f"[lunax]> Average scores - MSE: {avg_mse:.4f}, R2: {avg_r2:.4f}")
+        _cross_validate(self.model, X, y, k_fold, is_classifier=False)
 
     def predict(self, X: pd.DataFrame) -> np.ndarray:
         return self.model.predict(X)
@@ -276,27 +270,8 @@ class lgbm_clf(BaseModel):
             self.model.fit(X, y)
             print("[lunax]> model training finished.")
             return
-
-        skf = StratifiedKFold(n_splits=k_fold, shuffle=True, random_state=42)
-        fold_scores = []
         
-        for fold, (train_idx, val_idx) in enumerate(skf.split(X, y), 1):
-            X_train, X_val = X.iloc[train_idx], X.iloc[val_idx]
-            y_train, y_val = y.iloc[train_idx], y.iloc[val_idx]
-            
-            self.model.fit(X_train, y_train)
-            y_pred = self.model.predict(X_val)
-            
-            acc = accuracy_score(y_val, y_pred)
-            f1 = f1_score(y_val, y_pred, average='weighted')
-            fold_scores.append({'accuracy': acc, 'f1': f1})
-            
-            print(f"[lunax]> Fold {fold}/{k_fold} - Accuracy: {acc:.4f}, F1: {f1:.4f}")
-        
-        # 计算平均分数
-        avg_acc = np.mean([score['accuracy'] for score in fold_scores])
-        avg_f1 = np.mean([score['f1'] for score in fold_scores])
-        print(f"[lunax]> Average scores - Accuracy: {avg_acc:.4f}, F1: {avg_f1:.4f}")
+        _cross_validate(self.model, X, y, k_fold, is_classifier=True)
 
     def predict(self, X: pd.DataFrame) -> np.ndarray:
         return self.model.predict(X)
