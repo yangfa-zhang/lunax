@@ -5,7 +5,7 @@ python -m pytest tests/test_model.py -v
 import pytest
 import pandas as pd
 import numpy as np
-from lunax.models import xgb_reg, xgb_clf, lgbm_reg, lgbm_clf
+from lunax.models import xgb_reg, xgb_clf, lgbm_reg, lgbm_clf, cat_reg, cat_clf
 
 @pytest.fixture
 def sample_regression_data():
@@ -173,6 +173,93 @@ class TestLGBMClassifier:
         """测试k折交叉验证训练"""
         X, y = sample_classification_data
         model = lgbm_clf()
+        model.fit(X, y, k_fold=3)
+        
+        preds = model.predict(X)
+        assert isinstance(preds, np.ndarray)
+        assert len(preds) == len(y)
+
+
+# 在文件末尾添加 CatBoost 测试类
+class TestCatBoostRegressor:
+    def test_init(self):
+        """测试回归模型初始化"""
+        model = cat_reg()
+        assert model is not None
+        
+    def test_fit_predict(self, sample_regression_data):
+        """测试回归模型训练和预测"""
+        X, y = sample_regression_data
+        model = cat_reg()
+        model.fit(X, y)
+        
+        preds = model.predict(X)
+        assert isinstance(preds, np.ndarray)
+        assert len(preds) == len(y)
+        
+    def test_evaluate(self, sample_regression_data):
+        """测试回归模型评估"""
+        X, y = sample_regression_data
+        model = cat_reg()
+        model.fit(X, y)
+        
+        metrics = model.evaluate(X, y)
+        assert isinstance(metrics, dict)
+        assert all(k in metrics for k in ['rmse', 'mse', 'mae', 'r2'])
+        assert all(isinstance(v, float) for v in metrics.values())
+
+    def test_kfold_fit(self, sample_regression_data):
+        """测试k折交叉验证训练"""
+        X, y = sample_regression_data
+        model = cat_reg()
+        model.fit(X, y, k_fold=3)
+        
+        preds = model.predict(X)
+        assert isinstance(preds, np.ndarray)
+        assert len(preds) == len(y)
+
+class TestCatBoostClassifier:
+    def test_init(self):
+        """测试分类模型初始化"""
+        model = cat_clf()
+        assert model is not None
+        
+    def test_fit_predict(self, sample_classification_data):
+        """测试分类模型训练和预测"""
+        X, y = sample_classification_data
+        model = cat_clf()
+        model.fit(X, y)
+        
+        preds = model.predict(X)
+        assert isinstance(preds, np.ndarray)
+        assert len(preds) == len(y)
+        
+    def test_predict_proba(self, sample_classification_data):
+        """测试分类模型概率预测"""
+        X, y = sample_classification_data
+        model = cat_clf()
+        model.fit(X, y)
+        
+        probs = model.predict_proba(X)
+        assert isinstance(probs, np.ndarray)
+        assert probs.shape[0] == len(y)
+        assert probs.shape[1] == len(np.unique(y))
+        
+    def test_evaluate(self, sample_classification_data):
+        """测试分类模型评估"""
+        X, y = sample_classification_data
+        model = cat_clf()
+        model.fit(X, y)
+        
+        metrics = model.evaluate(X, y)
+        assert isinstance(metrics, dict)
+        assert all(k in metrics for k in ['accuracy', 'precision', 'recall', 'f1'])
+        assert all(isinstance(v, float) for v in metrics.values())
+
+    def test_kfold_fit(self, sample_classification_data):
+        """测试k折交叉验证训练"""
+        X, y = sample_classification_data
+        model = cat_clf()
         model.fit(X, y, k_fold=3)
         
         preds = model.predict(X)
