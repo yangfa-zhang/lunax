@@ -18,5 +18,5 @@ setup(
     packages = find_packages(),
     include_package_data = True,
     platforms = "any",
-    install_requires = ["numpy", "pandas","xgboost","tabulate","python-abc","typing","scikit-learn","optuna","lightgbm","catboost","matplotlib","seaborn"]          #这个项目依赖的第三方库
+    install_requires = ["numpy", "pandas","xgboost","tabulate","python-abc","typing","scikit-learn","optuna","lightgbm","catboost","matplotlib","seaborn","tabpfn"]          #这个项目依赖的第三方库
 )
