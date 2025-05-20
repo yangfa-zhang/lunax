@@ -3,3 +3,4 @@ dist
 .pytest_cache
 lunax.egg-info
 *.ipynb 
+develop_process.md

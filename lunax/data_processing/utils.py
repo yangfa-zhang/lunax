@@ -42,7 +42,7 @@ def split_data(
 
 def preprocess_data(
     df: pd.DataFrame,
-    target: str,
+    target: str = None,
     numeric_strategy: str = "mean",
     category_strategy: str = "most_frequent",
     scale_numeric: bool = True,
@@ -70,7 +70,8 @@ def preprocess_data(
     df = df.copy()
     
     # 分离特征类型（排除目标列）
-    feature_cols = df.columns.drop(target)
+    if target is not None:
+        feature_cols = df.columns.drop(target)
     numeric_features = df[feature_cols].select_dtypes(include=['int64', 'float64']).columns
     categorical_features = df[feature_cols].select_dtypes(include=['object', 'category']).columns
     
