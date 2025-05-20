@@ -1,11 +1,46 @@
-[![Python version](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)](https://pypi.org/project/lunax/)
+Metadata-Version: 2.4
+Name: lunaxx
+Version: 0.0.6
+Summary: A machine learning framework.
+Home-page: https://github.com/yangfa-zhang/lunax
+Author: yangfa-zhang
+Author-email: yangfa1027@gmail.com
+License: MIT Licence
+Keywords: pip,tabular data
+Platform: any
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy
+Requires-Dist: pandas
+Requires-Dist: xgboost
+Requires-Dist: tabulate
+Requires-Dist: python-abc
+Requires-Dist: typing
+Requires-Dist: scikit-learn
+Requires-Dist: optuna
+Requires-Dist: lightgbm
+Requires-Dist: catboost
+Requires-Dist: matplotlib
+Requires-Dist: seaborn
+Dynamic: author
+Dynamic: author-email
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: keywords
+Dynamic: license
+Dynamic: license-file
+Dynamic: platform
+Dynamic: requires-dist
+Dynamic: summary
+
 [CN](README.md) | [EN](README.EN.md)
 ### 
 
 <div>
 
 <a href="./imgs/luna.jpg"><img src="./imgs/luna.jpg" width="138" align="left" /></a>``Lunax`` is a machine learning framework specifically designed for the processing and analysis of tabular data. The name **Lunax** is derived from the name of a beloved feline mascot at South China University of Technology 
-**⭐️ Star it if you like it ⭐️**
+**猸愶笍 Star it if you like it 猸愶笍**
 </div>
 
 ---

@@ -1,9 +1,10 @@
+[![Python version](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)](https://pypi.org/project/lunax/)
 [中文](README.md) | [EN](README.EN.md)
 ### 
 
 <div>
 
-<a href="./imgs/luna.jpg"><img src="./imgs/luna.jpg" width="90" align="left" /></a>``lunax`` 是一个用于表格数据处理分析的机器学习框架。 lunax这个名字来自于图中的这只可爱的小猫，是华南理工大学最受欢迎的小猫**luna**。**⭐️ 如果喜欢，欢迎点个star ⭐️**
+<a href="./imgs/luna.jpg"><img src="./imgs/luna.jpg" width="90" align="left" /></a>``lunax`` 是一个用于表格数据处理分析的机器学习框架。 lunax这个名字来自于图中的这只可爱的小猫🐱，是华南理工大学最受欢迎的小猫**luna**。**⭐️ 如果喜欢，欢迎点个star！ ⭐️**
 </div>
 
 ---
