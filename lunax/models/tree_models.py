@@ -38,9 +38,9 @@ class xgb_reg(BaseModel):
     def predict(self, X: pd.DataFrame) -> np.ndarray:
         return self.model.predict(X)
 
-    def evaluate(self, X: pd.DataFrame, y: pd.Series) -> Dict[str, float]:
+    def evaluate(self, X: pd.DataFrame, y: pd.Series, log_info: bool = True) -> Dict[str, float]:
         preds = self.predict(X)
-        return reg_evaluate(y, preds)
+        return reg_evaluate(y, preds, log_info=log_info)
 
 
 class xgb_clf(BaseModel):
@@ -77,10 +77,11 @@ class xgb_clf(BaseModel):
         """返回预测概率"""
         return self.model.predict_proba(X)
 
-    def evaluate(self, X: pd.DataFrame, y: pd.Series) -> Dict[str, float]:
+    def evaluate(self, X: pd.DataFrame, y: pd.Series, log_info: bool = True) -> Dict[str, float]:
         """评估模型性能"""
         preds = self.predict(X)
-        return clf_evaluate(y, preds)
+        probs = self.predict_proba(X)
+        return clf_evaluate(y, preds, probs,log_info=log_info)
 
 
 class lgbm_reg(BaseModel):
@@ -113,9 +114,9 @@ class lgbm_reg(BaseModel):
     def predict(self, X: pd.DataFrame) -> np.ndarray:
         return self.model.predict(X)
 
-    def evaluate(self, X: pd.DataFrame, y: pd.Series) -> Dict[str, float]:
+    def evaluate(self, X: pd.DataFrame, y: pd.Series, log_info: bool = True) -> Dict[str, float]:
         preds = self.predict(X)
-        return reg_evaluate(y, preds)
+        return reg_evaluate(y, preds, log_info=log_info)
 
 
 class lgbm_clf(BaseModel):
@@ -152,10 +153,11 @@ class lgbm_clf(BaseModel):
         """返回预测概率"""
         return self.model.predict_proba(X)
 
-    def evaluate(self, X: pd.DataFrame, y: pd.Series) -> Dict[str, float]:
+    def evaluate(self, X: pd.DataFrame, y: pd.Series, log_info: bool = True) -> Dict[str, float]:
         """评估模型性能"""
         preds = self.predict(X)
-        return clf_evaluate(y, preds)
+        probs = self.predict_proba(X)
+        return clf_evaluate(y, preds, probs,log_info=log_info)
 
 
 class cat_reg(BaseModel):
@@ -191,9 +193,9 @@ class cat_reg(BaseModel):
     def predict(self, X: pd.DataFrame) -> np.ndarray:
         return self.model.predict(X)
 
-    def evaluate(self, X: pd.DataFrame, y: pd.Series) -> Dict[str, float]:
+    def evaluate(self, X: pd.DataFrame, y: pd.Series, log_info: bool = True) -> Dict[str, float]:
         preds = self.predict(X)
-        return reg_evaluate(y, preds)
+        return reg_evaluate(y, preds, log_info=log_info)
 
 
 class cat_clf(BaseModel):
@@ -233,8 +235,9 @@ class cat_clf(BaseModel):
         """返回预测概率"""
         return self.model.predict_proba(X)
 
-    def evaluate(self, X: pd.DataFrame, y: pd.Series) -> Dict[str, float]:
+    def evaluate(self, X: pd.DataFrame, y: pd.Series, log_info: bool = True) -> Dict[str, float]:
         """评估模型性能"""
         preds = self.predict(X)
-        return clf_evaluate(y, preds)
+        probs = self.predict_proba(X)
+        return clf_evaluate(y, preds, probs,log_info=log_info)
 

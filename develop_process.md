@@ -72,6 +72,9 @@ python setup.py sdist
 twine upload dist\lunax-0.0.7.tar.gz
 ```
 
+### 参考kaggle笔记本：
+https://www.kaggle.com/competitions/playground-series-s3e4/discussion/381305#2116795
+https://www.kaggle.com/code/samuelcortinhas/ps-s3e3-hill-climbing-like-a-gm
 
 ### 阶段六：数据处理增强
 

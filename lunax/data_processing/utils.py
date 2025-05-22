@@ -72,6 +72,8 @@ def preprocess_data(
     # 分离特征类型（排除目标列）
     if target is not None:
         feature_cols = df.columns.drop(target)
+    else:
+        feature_cols = df.columns
     numeric_features = df[feature_cols].select_dtypes(include=['int64', 'float64']).columns
     categorical_features = df[feature_cols].select_dtypes(include=['object', 'category']).columns
     
