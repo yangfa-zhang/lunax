@@ -27,7 +27,7 @@ pip install lunax
 #### Data Loading and Pre-processing
 ```Python
 from lunax.data_processing.utils import *
-df_train = load_data('train.csv') # or df = load_data('train.parquet',mode='parquet')
+df_train = load_data('train.csv') # or df = load_data('train.parquet')
 target = 'label_column_name'
 df_train = preprocess_data(df_train,target) # data pre-processing, including missing value handling, feature encoding, feature scaling
 X_train, X_val, y_train, y_val = split_data(df_train, target)

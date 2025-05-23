@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from typing import Tuple, Dict, Literal, Optional
 
-def load_data(file_path: str, file_type: Literal['csv','parquet']) -> pd.DataFrame:
+def load_data(file_path: str) -> pd.DataFrame:
     """
     从表格数据文件中加载数据为 DataFrame。
     
@@ -12,11 +12,20 @@ def load_data(file_path: str, file_type: Literal['csv','parquet']) -> pd.DataFra
     返回：
         pd.DataFrame - 加载后的数据
     """
-    if file_type not in ['csv','parquet']:
-        raise ValueError("file_type must be 'csv' or 'parquet'")
-    if file_type == 'parquet':
-        return pd.read_parquet(file_path)
-    return pd.read_csv(file_path)
+    suffix = file_path.lower().split('.')[-1]
+    try:
+        if suffix == 'csv':
+            df = pd.read_csv(file_path)
+        elif suffix == 'parquet':
+            df = pd.read_parquet(file_path)
+        elif suffix in ['xlsx', 'xls']:
+            df = pd.read_excel(file_path)
+        else:
+            raise ValueError(f"Unsuported: {suffix}")
+        return df
+    except Exception as e:
+        raise Exception(f"Failed to load data: {str(e)}")
+
 
 def split_data(
     df: pd.DataFrame, 

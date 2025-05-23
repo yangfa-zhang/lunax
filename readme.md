@@ -27,7 +27,7 @@ pip install lunax
 #### 数据加载和预处理
 ```Python
 from lunax.data_processing.utils import *
-df_train = load_data('train.csv') # 或者 df = load_data('train.parquet',mode='parquet')
+df_train = load_data('train.csv') # 或者 df = load_data('train.parquet')
 target = '标签列名'
 df_train = preprocess_data(df_train,target) # 数据预处理, 包括缺失值处理, 特征编码, 特征缩放
 X_train, X_val, y_train, y_val = split_data(df_train, target)
