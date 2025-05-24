@@ -5,7 +5,7 @@
 
 <div>
 
-<a href="./imgs/luna.jpg"><img src="./imgs/luna.jpg" width="90" align="left" /></a>``lunax`` 是一个用于表格数据处理分析的机器学习框架。 lunax这个名字来自于图中的这只可爱的小猫🐱，是华南理工大学最受欢迎的小猫**luna**。**⭐️ 如果喜欢，欢迎点个star！ ⭐️**
+<a href="./imgs/luna3.jpg"><img src="./imgs/luna3.jpg" width="50" align="left" /></a>``lunax`` 是一个用于表格数据处理分析的机器学习框架。 lunax这个名字来自于图中的这只可爱的小猫🐱，是华南理工大学最受欢迎的小猫**luna**。**⭐️ 如果喜欢，欢迎点个star！ ⭐️**
 </div>
 
 ---
