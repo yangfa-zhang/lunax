@@ -5,7 +5,7 @@
 
 <div>
 
-<a href="./imgs/luna3.jpg"><img src="./imgs/luna3.jpg" width="78" align="left" /></a>``Lunax`` is a machine learning framework specifically designed for the processing and analysis of tabular data. The name **Lunax** is derived from the name of a beloved feline mascot luna🐱 at South China University of Technology 
+<a href="./imgs/luna3.jpg"><img src="./imgs/luna3.jpg" width="60" align="left" /></a>``Lunax`` is a machine learning framework specifically designed for the processing and analysis of tabular data. The name **Lunax** is derived from the name of a beloved feline mascot luna🐱 at South China University of Technology 
 **⭐️ Star it if you like it ⭐️**
 </div>
 
