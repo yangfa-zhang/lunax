@@ -69,3 +69,10 @@ ensemble = HillClimbingEnsemble(
 best_weights = ensemble.fit(X_val, y_val)
 predictions = ensemble.predict(df_test)
 ```
+#### Feature Importance Analysis
+```Python
+from lunax.xai import TreeExplainer
+explainer = TreeExplainer(model)
+explainer.plot_summary(X_val)
+importance = explainer.get_feature_importance(X_val)
+```

@@ -23,6 +23,7 @@ pip install lunax
 - 自动化机器学习建模
 - 模型评估和解释
 - 集成学习
+- 特征重要性分析
 
 ### 快速开始
 #### 数据加载和预处理
@@ -69,4 +70,11 @@ ensemble = HillClimbingEnsemble(
 )
 best_weights = ensemble.fit(X_val, y_val)
 predictions = ensemble.predict(df_test)
+```
+#### 特征重要性分析
+```Python
+from lunax.xai import TreeExplainer
+explainer = TreeExplainer(model)
+explainer.plot_summary(X_val)
+importance = explainer.get_feature_importance(X_val)
 ```
