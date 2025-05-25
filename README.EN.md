@@ -21,6 +21,7 @@ pip install lunax
 - EDA analysis
 - Supports multi-model training and Hyperparameter tuning
 - Comprehensive model evaluation and Explainable AI (XAI)
+- Ensemble learning
 
 ### Quick Start
 #### Data Loading and Pre-processing

@@ -4,3 +4,4 @@ dist
 lunax.egg-info
 *.ipynb 
 develop_process.md
+catboost_info
