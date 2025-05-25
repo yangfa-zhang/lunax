@@ -11,8 +11,9 @@ class HillClimbingEnsemble:
     def __init__(
         self,
         models: List[BaseModel],
-        metric: Union[str, List[str]] = "auc",
-        maximize: bool = True,
+        task: Optional[str] = ["classification", "regression"],
+        metric: Union[str, List[str]] = None,
+        maximize: bool = None,
         max_iter: int = 100,
         step_size: float = 0.1,
         tolerance: float = 1e-5,
@@ -24,8 +25,9 @@ class HillClimbingEnsemble:
         
         Args:
             models: BaseModel子类实例列表，这些模型需要已经训练好
-            metric: 评估指标
-            maximize: 是否最大化评估指标
+            task: 任务类型，"classification" 或 "regression"
+            metric: 评估指标，分类默认["auc"]，回归默认["rmse"]
+            maximize: 是否最大化评估指标，分类默认True，回归默认False
             max_iter: 最大迭代次数
             step_size: 权重调整步长
             tolerance: 收敛阈值
@@ -34,8 +36,23 @@ class HillClimbingEnsemble:
         """
         self.models = models
         self.n_models = len(models)
-        self.metric = metric if isinstance(metric, list) else [metric]
-        self.maximize = maximize
+        
+        valid_tasks = ["classification", "regression"]
+        if task not in valid_tasks:
+            raise ValueError(f"task must be one of {valid_tasks}")
+        self.task = task
+        
+        # 根据任务类型设置默认值
+        if metric is None:
+            self.metric = ["auc"] if task == "classification" else ["rmse"]
+        else:
+            self.metric = metric if isinstance(metric, list) else [metric]
+            
+        if maximize is None:
+            self.maximize = True if task == "classification" else False
+        else:
+            self.maximize = maximize
+            
         self.max_iter = max_iter
         self.step_size = step_size
         self.tolerance = tolerance
@@ -45,30 +62,29 @@ class HillClimbingEnsemble:
             np.random.seed(random_state)
             
         self.best_weights = None
-        self.best_score = float('-inf') if maximize else float('inf')
+        self.best_score = float('-inf') if self.maximize else float('inf')
         self.history = []
         
     def _get_ensemble_predictions(
         self, 
         X: pd.DataFrame, 
         weights: np.ndarray
-    ) -> tuple[np.ndarray, np.ndarray]:
-        """获取加权集成预测
-        
-        Returns:
-            tuple: (预测概率, 预测标签)
-        """
+    ) -> Union[tuple[np.ndarray, np.ndarray], np.ndarray]:
+        """获取加权集成预测"""
         predictions = []
         for model, weight in zip(self.models, weights):
-            if hasattr(model, 'predict_proba'):
+            if self.task == "classification" and hasattr(model, 'predict_proba'):
                 pred = model.predict_proba(X)
             else:
                 pred = model.predict(X)
             predictions.append(pred * weight)
         
-        proba = np.sum(predictions, axis=0)
-        labels = np.argmax(proba, axis=1)
-        return proba, labels
+        if self.task == "classification":
+            proba = np.sum(predictions, axis=0)
+            labels = np.argmax(proba, axis=1)
+            return proba, labels
+        else:
+            return np.sum(predictions, axis=0)
     
     def _evaluate_weights(
         self,
@@ -77,25 +93,27 @@ class HillClimbingEnsemble:
         y: pd.Series
     ) -> float:
         """评估当前权重组合的性能"""
-        ensemble_probs,ensemble_preds = self._get_ensemble_predictions(X, weights)
-        
-        accuracy = accuracy_score(y, ensemble_preds)
-        precision = precision_score(y, ensemble_preds, average='weighted', zero_division=0)
-        recall = recall_score(y, ensemble_preds, average='weighted')
-        f1 = f1_score(y, ensemble_preds, average='weighted')
-        # 对于二分类问题
-        if ensemble_probs.shape[1] == 2:
-            auc = roc_auc_score(y, ensemble_probs[:, 1])
-        # 对于多分类问题
+        if self.task == "classification":
+            ensemble_probs, ensemble_preds = self._get_ensemble_predictions(X, weights)
+            
+            scores = {
+                'accuracy': accuracy_score(y, ensemble_preds),
+                'precision': precision_score(y, ensemble_preds, average='weighted', zero_division=0),
+                'recall': recall_score(y, ensemble_preds, average='weighted'),
+                'f1': f1_score(y, ensemble_preds, average='weighted'),
+                'auc': roc_auc_score(y, ensemble_probs[:, 1]) if ensemble_probs.shape[1] == 2 
+                       else roc_auc_score(y, ensemble_probs, multi_class='ovr', average='weighted')
+            }
         else:
-            auc = roc_auc_score(y, ensemble_probs, multi_class='ovr', average='weighted')
-        scores = {
-            'accuracy': accuracy,
-            'precision': precision,
-            'recall': recall,
-            'f1': f1,
-            'auc': auc
-        }
+            ensemble_preds = self._get_ensemble_predictions(X, weights)
+            
+            scores = {
+                'rmse': root_mean_squared_error(y, ensemble_preds),
+                'mae': mean_absolute_error(y, ensemble_preds),
+                'mse': mean_squared_error(y, ensemble_preds),
+                'r2': r2_score(y, ensemble_preds)
+            }
+            
         final_score = np.mean([scores[m] for m in self.metric])
         return final_score if self.maximize else -final_score
     
@@ -165,15 +183,22 @@ class HillClimbingEnsemble:
         return self.best_weights
     
     def predict(self, X: pd.DataFrame) -> np.ndarray:
-        """使用最优权重进行预测标签"""
+        """使用最优权重进行预测"""
         if self.best_weights is None:
             raise ValueError("模型还未训练，请先调用fit方法")
-        _, labels = self._get_ensemble_predictions(X, self.best_weights)
-        return labels
+            
+        if self.task == "classification":
+            _, labels = self._get_ensemble_predictions(X, self.best_weights)
+            return labels
+        else:
+            return self._get_ensemble_predictions(X, self.best_weights)
     
     def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
-        """使用最优权重进行预测概率"""
+        """使用最优权重进行预测概率（仅用于分类任务）"""
+        if self.task != "classification":
+            raise ValueError("predict_proba方法仅支持分类任务")
         if self.best_weights is None:
             raise ValueError("模型还未训练，请先调用fit方法")
+            
         proba, _ = self._get_ensemble_predictions(X, self.best_weights)
         return proba
