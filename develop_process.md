@@ -69,7 +69,7 @@ https://www.kaggle.com/code/thedevastator/the-fine-art-of-hyperparameter-tuning
 
 ```
 python setup.py sdist
-twine upload dist\lunax-0.0.7.tar.gz
+twine upload dist\lunax-0.0.8.tar.gz
 ```
 
 ### 参考kaggle笔记本：
