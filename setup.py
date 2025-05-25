@@ -5,7 +5,7 @@ from setuptools import setup, find_packages            #这个包没有的可以
 
 setup(
     name = "lunax",      #这里是pip项目发布的名称
-    version = "0.0.9",  #版本号，数值大的会优先被pip
+    version = "0.0.10",  #版本号，数值大的会优先被pip
     keywords = ["pip", "tabular data"],			# 关键字
     description = "A machine learning framework.",	# 描述
     long_description= "Lunax is a machine learning framework specifically designed for the processing and analysis of tabular data. The name Lunax is derived from the name of a beloved feline mascot Luna at South China University of Technology ",
