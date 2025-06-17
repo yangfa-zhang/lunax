@@ -20,8 +20,9 @@ pip install lunax
 - Data loading and Data pre-processing
 - EDA analysis
 - Supports multi-model training and Hyperparameter tuning
-- Comprehensive model evaluation and Explainable AI (XAI)
+- Comprehensive model evaluation
 - Ensemble learning
+- Explainable AI (XAI)
 
 ### Quick Start
 #### Data Loading and Pre-processing
@@ -41,8 +42,8 @@ categoric_eda([df_train,df_test],['train','test'],target=target) # categorical f
 
 <table>
   <tr>
-    <td><img src="./imgs/eda.png" width="300"/></td>
-    <td><img src="./imgs/eda2.png" width="300"/></td>
+    <td><img src="./imgs/eda.png" width="600"/></td>
+    <td><img src="./imgs/eda2.png" width="600"/></td>
   </tr>
 </table>
 
@@ -57,9 +58,25 @@ best_params = results['best_params']
 model = xgb_clf(best_params)
 model.fit(X_train, y_train)
 ```
-#### Model Evaluation and Explainable AI (XAI)
+#### Model Evaluation
 ```Python
 model.evaluate(X_val, y_val)
+```
+```text
+[lunax]> label information:
++---------+---------+
+|   label |   count |
++=========+=========+
+|       1 |     319 |
++---------+---------+
+|       0 |     119 |
++---------+---------+
+[lunax]> model evaluation results:
++-----------+------------+-------------+----------+------+
+| metrics   |   accuracy |   precision |   recall |   f1 |
++===========+============+=============+==========+======+
+| values    |       0.73 |        0.53 |     0.73 | 0.61 |
++-----------+------------+-------------+----------+------+
 ```
 #### Ensemble Learning
 ```Python
@@ -77,10 +94,35 @@ ensemble = HillClimbingEnsemble(
 best_weights = ensemble.fit(X_val, y_val)
 predictions = ensemble.predict(df_test)
 ```
-#### Feature Importance Analysis
+#### Explainable AI (XAI)
 ```Python
 from lunax.xai import TreeExplainer
 explainer = TreeExplainer(model)
 explainer.plot_summary(X_val)
 importance = explainer.get_feature_importance(X_val)
 ```
+```text
+[lunax]> Clear blue/red separation indicates a highly influential feature.
+```
+<img src="./imgs/shap.png" width="600" />
+
+```text
+[lunax]> Feature Importance Ranking:
++----+---------------+---------------------+
+|    |    Feature    |     Importance      |
++----+---------------+---------------------+
+| 1  |     cloud     | 2.3085615634918213  |
+| 2  |   sunshine    | 0.6377484202384949  |
+| 3  |   dewpoint    | 0.5257667899131775  |
+| 4  |   humidity    | 0.4827548861503601  |
+| 5  |   windspeed   | 0.40086665749549866 |
+| 6  |      id       | 0.38620123267173767 |
+| 7  |   pressure    | 0.3780971169471741  |
+| 8  |    mintemp    | 0.32988569140434265 |
+| 9  |      day      | 0.30587586760520935 |
+| 10 |    maxtemp    | 0.26082852482795715 |
+| 11 | winddirection | 0.23236176371574402 |
+| 12 |  temparature  | 0.17218443751335144 |
++----+---------------+---------------------+
+```
+
