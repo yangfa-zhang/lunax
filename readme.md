@@ -38,6 +38,12 @@ from lunax.viz import numeric_eda, categoric_eda
 numeric_eda([df_train,df_test],['train','test'],target=target) # numeric feature analysis
 categoric_eda([df_train,df_test],['train','test'],target=target) # categorical feature analysis
 ```
+
+<div>
+<a href="./imgs/eda.png"><img src="./imgs/eda.png" width="300" align="left" /></a>
+<a href="./imgs/eda2.png"><img src="./imgs/eda2.png" width="300" align="right" /></a>
+</div>
+
 #### Automation Machine Learning Modeling
 ```Python
 from lunax.models import xgb_clf # or xgb_reg, lgbm_reg, lgbm_clf, cat_clf, cat_reg
