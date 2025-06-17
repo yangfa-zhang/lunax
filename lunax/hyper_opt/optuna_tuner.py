@@ -185,9 +185,9 @@ class OptunaTuner(BaseTuner):
             
             metrics = {
                 'accuracy': accuracy_score(y_val, y_pred),
-                'precision': precision_score(y_val, y_pred),
-                'recall': recall_score(y_val, y_pred),
-                'f1': f1_score(y_val, y_pred)
+                'precision': precision_score(y_val, y_pred, average='weighted'),
+                'recall': recall_score(y_val, y_pred, average='weighted'),
+                'f1': f1_score(y_val, y_pred, average='weighted')
             }
             if self.metric_name is None:
                 self.metric_name = 'f1'
