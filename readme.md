@@ -39,10 +39,12 @@ numeric_eda([df_train,df_test],['train','test'],target=target) # numeric feature
 categoric_eda([df_train,df_test],['train','test'],target=target) # categorical feature analysis
 ```
 
-<div>
-<a href="./imgs/eda.png"><img src="./imgs/eda.png" width="300" align="left" /></a>
-<a href="./imgs/eda2.png"><img src="./imgs/eda2.png" width="300" align="right" /></a>
-</div>
+<table>
+  <tr>
+    <td><img src="./imgs/eda.png" width="300"/></td>
+    <td><img src="./imgs/eda2.png" width="300"/></td>
+  </tr>
+</table>
 
 #### Automation Machine Learning Modeling
 ```Python
