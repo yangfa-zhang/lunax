@@ -23,6 +23,8 @@ pip install lunax
 - Comprehensive model evaluation
 - Ensemble learning
 - Explainable AI (XAI)
+- Object-oriented design with unified interfaces for easy extension
+- Comprehensive unit testing with pytest for code quality control
 
 ### Quick Start
 #### Data Loading and Pre-processing
