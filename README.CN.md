@@ -40,6 +40,13 @@ from lunax.viz import numeric_eda, categoric_eda
 numeric_eda([df_train,df_test],['train','test'],target=target) # 数值型特征分析
 categoric_eda([df_train,df_test],['train','test'],target=target) # 类别型特征分析
 ```
+<table>
+  <tr>
+    <td><img src="./imgs/eda.png" width="600"/></td>
+    <td><img src="./imgs/eda2.png" width="600"/></td>
+  </tr>
+</table>
+
 #### 自动化机器学习建模
 ```Python
 from lunax.models import xgb_clf # 或者 xgb_reg, lgbm_reg, lgbm_clf, cat_reg, cat_clf
@@ -55,6 +62,23 @@ model.fit(X_train, y_train)
 ```Python
 model.evaluate(X_val, y_val)
 ```
+```text
+[lunax]> label information:
++---------+---------+
+|   label |   count |
++=========+=========+
+|       1 |     319 |
++---------+---------+
+|       0 |     119 |
++---------+---------+
+[lunax]> model evaluation results:
++-----------+------------+-------------+----------+------+
+| metrics   |   accuracy |   precision |   recall |   f1 |
++===========+============+=============+==========+======+
+| values    |       0.73 |        0.53 |     0.73 | 0.61 |
++-----------+------------+-------------+----------+------+
+```
+
 #### 集成学习
 ```Python
 from lunax.ensembles import HillClimbingEnsemble
@@ -77,4 +101,29 @@ from lunax.xai import TreeExplainer
 explainer = TreeExplainer(model)
 explainer.plot_summary(X_val)
 importance = explainer.get_feature_importance(X_val)
+```
+
+```text
+[lunax]> Clear blue/red separation indicates a highly influential feature.
+```
+<img src="./imgs/shap.png" width="600" />
+
+```text
+[lunax]> Feature Importance Ranking:
++----+---------------+---------------------+
+|    |    Feature    |     Importance      |
++----+---------------+---------------------+
+| 1  |     cloud     | 2.3085615634918213  |
+| 2  |   sunshine    | 0.6377484202384949  |
+| 3  |   dewpoint    | 0.5257667899131775  |
+| 4  |   humidity    | 0.4827548861503601  |
+| 5  |   windspeed   | 0.40086665749549866 |
+| 6  |      id       | 0.38620123267173767 |
+| 7  |   pressure    | 0.3780971169471741  |
+| 8  |    mintemp    | 0.32988569140434265 |
+| 9  |      day      | 0.30587586760520935 |
+| 10 |    maxtemp    | 0.26082852482795715 |
+| 11 | winddirection | 0.23236176371574402 |
+| 12 |  temparature  | 0.17218443751335144 |
++----+---------------+---------------------+
 ```
