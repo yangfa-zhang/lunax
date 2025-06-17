@@ -128,3 +128,10 @@ importance = explainer.get_feature_importance(X_val)
 +----+---------------+---------------------+
 ```
 
+#### Test Set Prediction
+```Python
+df_test = load_data('test.csv')
+df_test = preprocess_data(df_train,target)
+y_pred = model.predict(df_test)
+# y_pred_proba = model.predict_proba(X_test)
+```

@@ -130,3 +130,11 @@ importance = explainer.get_feature_importance(X_val)
 | 12 |  temparature  | 0.17218443751335144 |
 +----+---------------+---------------------+
 ```
+
+#### 预测
+```Python
+df_test = load_data('test.csv')
+df_test = preprocess_data(df_train,target)
+y_pred = model.predict(df_test)
+# y_pred_proba = model.predict_proba(X_test)
+```
